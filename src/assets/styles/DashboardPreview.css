@@ -1,0 +1,60 @@
+.dashboard{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:90px;
+}
+
+.dashboard-left{
+width:45%;
+}
+
+.dashboard-left h2{
+font-size:45px;
+margin-bottom:25px;
+}
+
+.dashboard-left p{
+font-size:18px;
+line-height:1.8;
+margin-bottom:30px;
+}
+
+.dashboard-left button{
+padding:15px 35px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:30px;
+cursor:pointer;
+}
+
+.dashboard-right{
+width:40%;
+}
+
+.score-card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.progress{
+height:10px;
+background:#ddd;
+border-radius:20px;
+margin-top:10px;
+}
+
+.progress-fill{
+height:10px;
+background:#2563eb;
+border-radius:20px;
+}
+
+.one{width:90%;}
+.two{width:85%;}
+.three{width:75%;}
+.four{width:95%;}
