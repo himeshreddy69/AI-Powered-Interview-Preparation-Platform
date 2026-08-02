@@ -30,6 +30,7 @@ export const logoutUser = async () => {
 export function getAuthErrorMessage(error) {
   const messages = {
     "auth/email-already-in-use": "An account already exists with this email address.",
+    "auth/configuration-not-found": "Firebase Authentication is not configured for this project. Enable Email/Password sign-in in Firebase Console.",
     "auth/invalid-credential": "Incorrect email or password.",
     "auth/invalid-email": "Enter a valid email address.",
     "auth/weak-password": "Password must be at least 6 characters.",

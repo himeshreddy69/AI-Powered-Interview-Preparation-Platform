@@ -57,7 +57,7 @@ body {
   font-weight: bold;
 }
 
-.register-btn {
+.left-panel .register-btn {
   width: 100%;
   height: 55px;
   margin-top: 30px;
@@ -71,7 +71,7 @@ body {
   transition: 0.3s;
 }
 
-.register-btn:hover {
+.left-panel .register-btn:hover {
   background: #2b8cff;
   color: white;
 }
@@ -131,7 +131,7 @@ body {
   font-size: 15px;
 }
 
-.login-btn {
+.right-panel .login-btn {
   width: 100%;
   height: 55px;
   margin-top: 30px;
@@ -145,8 +145,20 @@ body {
   transition: .3s;
 }
 
-.login-btn:hover {
+.right-panel .login-btn:hover {
   background: #0d6efd;
+}
+
+.right-panel .login-btn:disabled,
+.right-panel .google-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.auth-error {
+  margin-top: 16px;
+  color: #c62828;
+  font-size: 14px;
 }
 
 .otp {
@@ -176,7 +188,7 @@ body {
   color: #777;
 }
 
-.google-btn {
+.right-panel .google-btn {
   width: 100%;
   height: 55px;
   border: 1px solid #ddd;
@@ -188,7 +200,7 @@ body {
   transition: .3s;
 }
 
-.google-btn:hover {
+.right-panel .google-btn:hover {
   background: #f4f4f4;
 }
 

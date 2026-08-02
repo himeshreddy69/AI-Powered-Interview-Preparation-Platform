@@ -70,12 +70,19 @@
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  width: 170px;
-  height: 50px;
+  height: 52px;
   border-radius: 30px;
   font-size: 22px;
   font-weight: 600;
   transition: 0.3s ease;
+}
+
+.login-btn {
+  width: 145px;
+}
+
+.register-btn {
+  width: 200px;
 }
 
 /* Login */
@@ -124,9 +131,14 @@
     justify-content: center;
   }
 
-  .login-btn,
+  .login-btn {
+    width: 135px;
+    height: 46px;
+    font-size: 18px;
+  }
+
   .register-btn {
-    width: 150px;
+    width: 165px;
     height: 46px;
     font-size: 18px;
   }
