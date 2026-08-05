@@ -1,0 +1,33 @@
+.welcome-card{
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+color:white;
+
+border-radius:16px;
+
+padding:35px;
+
+margin-bottom:30px;
+
+box-shadow:0 10px 30px rgba(37,99,235,.25);
+
+}
+
+.welcome-card h2{
+
+font-size:32px;
+
+margin-bottom:15px;
+
+}
+
+.welcome-card p{
+
+font-size:17px;
+
+line-height:1.8;
+
+color:#e2e8f0;
+
+}

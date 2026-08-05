@@ -1,0 +1,37 @@
+.profile-image{
+
+width:120px;
+
+height:120px;
+
+border-radius:50%;
+
+display:block;
+
+margin:20px auto;
+
+border:5px solid #2563eb;
+
+object-fit:cover;
+
+}
+
+.dashboard-card h3{
+
+text-align:center;
+
+margin-top:10px;
+
+color:#0f172a;
+
+}
+
+.dashboard-card p{
+
+text-align:center;
+
+margin-top:8px;
+
+color:#64748b;
+
+}

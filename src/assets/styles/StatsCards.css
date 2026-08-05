@@ -1,0 +1,47 @@
+.stats-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:20px;
+
+margin-top:20px;
+
+}
+
+.stats-grid div{
+
+background:#eff6ff;
+
+padding:20px;
+
+border-radius:12px;
+
+text-align:center;
+
+transition:.3s;
+
+}
+
+.stats-grid div:hover{
+
+transform:translateY(-5px);
+
+}
+
+.stats-grid h3{
+
+font-size:32px;
+
+color:#2563eb;
+
+margin-bottom:8px;
+
+}
+
+.stats-grid p{
+
+color:#64748b;
+
+}

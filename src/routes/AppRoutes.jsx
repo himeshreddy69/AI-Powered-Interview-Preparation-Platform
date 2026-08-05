@@ -4,11 +4,16 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Dashboard from "../pages/Dashboard";
 import ForgotPassword from "../pages/ForgotPassword";
 
-import ProtectedRoute from "./ProtectedRoute";
+import Dashboard from "../pages/Dashboard";
+import Profile from "../pages/Profile";
+import Resume from "../pages/Resume";
+import Interview from "../pages/Interview";
+import Results from "../pages/Results";
+import Settings from "../pages/Settings";
 
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
 
@@ -16,50 +21,67 @@ function AppRoutes() {
 
     <Routes>
 
-      <Route 
-        path="/" 
-        element={<Home />} 
+      {/* Home */}
+
+      <Route
+        path="/"
+        element={<Home />}
       />
 
 
-      <Route 
-        path="/about" 
-        element={<About />} 
+
+      {/* About */}
+
+      <Route
+        path="/about"
+        element={<About />}
       />
 
 
-      <Route 
-        path="/login" 
-        element={<Login />} 
+
+      {/* Login */}
+
+      <Route
+        path="/login"
+        element={<Login />}
       />
 
 
-      <Route 
-        path="/register" 
-        element={<Register />} 
+
+      {/* Register */}
+
+      <Route
+        path="/register"
+        element={<Register />}
       />
 
 
-      {/* Redirect signup to register */}
-      <Route 
-        path="/signup" 
+
+      {/* Signup Redirect */}
+
+      <Route
+        path="/signup"
         element={
-          <Navigate 
-            to="/register" 
-            replace 
+          <Navigate
+            to="/register"
+            replace
           />
-        } 
+        }
       />
+
 
 
       {/* Forgot Password */}
+
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
       />
 
 
-      {/* Protected Dashboard */}
+
+      {/* Dashboard */}
+
       <Route
         path="/dashboard"
         element={
@@ -70,18 +92,83 @@ function AppRoutes() {
       />
 
 
-      {/* Unknown URL */}
-      <Route 
-        path="*" 
-        element={<Home />} 
+
+      {/* Profile */}
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
       />
 
+
+
+      {/* Upload Resume */}
+
+      <Route
+        path="/upload-resume"
+        element={
+          <ProtectedRoute>
+            <Resume />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+      {/* Interview */}
+
+      <Route
+        path="/interview"
+        element={
+          <ProtectedRoute>
+            <Interview />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+      {/* Results */}
+
+      <Route
+        path="/results"
+        element={
+          <ProtectedRoute>
+            <Results />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+      {/* Settings */}
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+      {/* Unknown Route */}
+
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
 
     </Routes>
 
   );
 
 }
-
 
 export default AppRoutes;
