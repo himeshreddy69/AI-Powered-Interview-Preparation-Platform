@@ -10,7 +10,7 @@ import {
 
 function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer" id="contact">
       <div className="footer-container">
 
         {/* Company */}
@@ -27,13 +27,13 @@ function Footer() {
         <div className="footer-column">
           <h3>Quick Links</h3>
 
-          <p>Home</p>
-          <p>Features</p>
-          <p>Companies</p>
-          <p>About</p>
-          <p>Contact</p>
-          <p>Login</p>
-          <p>Register</p>
+          <p><a href="/" style={{ color: "inherit", textDecoration: "none" }}>Home</a></p>
+          <p><a href="#features" style={{ color: "inherit", textDecoration: "none" }}>Features</a></p>
+          <p><a href="#companies" style={{ color: "inherit", textDecoration: "none" }}>Companies</a></p>
+          <p><a href="/about" style={{ color: "inherit", textDecoration: "none" }}>About</a></p>
+          <p><a href="#contact" style={{ color: "inherit", textDecoration: "none" }}>Contact</a></p>
+          <p><a href="/login" style={{ color: "inherit", textDecoration: "none" }}>Login</a></p>
+          <p><a href="/register" style={{ color: "inherit", textDecoration: "none" }}>Register</a></p>
         </div>
 
         {/* Interview Types */}
@@ -52,11 +52,11 @@ function Footer() {
           <h3>Contact</h3>
 
           <p>
-            <FaEnvelope /> support@debic.ai
+            <FaEnvelope /> supportdebic.ai@gmail.com
           </p>
 
           <p>
-            <FaPhoneAlt /> +91 98765 43210
+            <FaPhoneAlt /> +91 9392580322
           </p>
 
           <p>

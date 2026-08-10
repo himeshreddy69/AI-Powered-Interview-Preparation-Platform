@@ -1,0 +1,109 @@
+/* =========================================
+   DARK MODE THEME STYLES
+========================================= */
+
+:root {
+  --bg-primary: #f4f7fb;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+}
+
+[data-theme="dark"], body.dark-theme {
+  --bg-primary: #0b0f19;
+  --bg-card: #151c2c;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #27354a;
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* Dark mode overrides for cards, panels, and sidebars */
+body.dark-theme .dashboard-card,
+body.dark-theme .interview-panel,
+body.dark-theme .interview-screen,
+body.dark-theme .topbar,
+body.dark-theme .sidebar,
+body.dark-theme .question-card,
+body.dark-theme div[style*="background: #ffffff"],
+body.dark-theme section[style*="background: #ffffff"] {
+  background-color: #151c2c !important;
+  border-color: #27354a !important;
+  color: #f8fafc !important;
+}
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme strong {
+  color: #f8fafc !important;
+}
+
+body.dark-theme p,
+body.dark-theme span {
+  color: #cbd5e1;
+}
+
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.dark-theme .interview-type-card {
+  background-color: #1a2333 !important;
+  border-color: #27354a !important;
+}
+
+body.dark-theme .interview-type-card.selected {
+  background-color: #1e2e4a !important;
+  border-color: #3b82f6 !important;
+}
+
+body.dark-theme .secondary-btn {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+body.dark-theme .secondary-btn:hover {
+  background-color: #334155 !important;
+}
+
+body.dark-theme .dashboard-btn {
+  background-color: #1a2333 !important;
+  border-color: #27354a !important;
+  color: #f8fafc !important;
+}
+
+/* Theme Toggle Button styling */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .theme-toggle-btn {
+  border-color: #334155;
+  background: #1e293b;
+  color: #f8fafc;
+}

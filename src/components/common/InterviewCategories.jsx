@@ -1,53 +1,91 @@
 import "../../assets/styles/InterviewCategories.css";
 
-function InterviewCategories(){
+function InterviewCategories() {
+  const categories = [
+    {
+      name: "HR Interview",
+      icon: "👤",
+      description: "Practice HR and communication questions.",
+    },
+    {
+      name: "Technical",
+      icon: "💻",
+      description: "Test your technical knowledge.",
+    },
+    {
+      name: "Coding",
+      icon: "⌨️",
+      description: "Practice coding and problem solving.",
+    },
+    {
+      name: "Behavioral",
+      icon: "🧠",
+      description: "Improve your behavioral responses.",
+    },
+    {
+      name: "System Design",
+      icon: "🏗️",
+      description: "Practice system design interviews.",
+    },
+    {
+      name: "Company Wise",
+      icon: "🏢",
+      description: "Prepare for company-specific interviews.",
+    },
+    {
+      name: "Aptitude",
+      icon: "📊",
+      description: "Improve aptitude and reasoning skills.",
+    },
+    {
+      name: "Group Discussion",
+      icon: "👥",
+      description: "Practice group discussion skills.",
+    },
+  ];
 
-const categories=[
+  return (
+    <section className="category-section">
+      <div className="category-header">
+        <div>
+          <span className="category-label">
+            PRACTICE & PREPARE
+          </span>
 
-"HR Interview",
+          <h2>Interview Categories</h2>
 
-"Technical",
+          <p>
+            Choose an interview category and start practicing with AI.
+          </p>
+        </div>
+      </div>
 
-"Coding",
+      <div className="category-grid">
+        {categories.map((category) => (
+          <div
+            className="category-card"
+            key={category.name}
+          >
+            <div className="category-icon">
+              {category.icon}
+            </div>
 
-"Behavioral",
+            <h3>{category.name}</h3>
 
-"System Design",
+            <p>{category.description}</p>
 
-"Company Wise",
-
-"Aptitude",
-
-"Group Discussion"
-
-];
-
-return(
-
-<section className="category-section">
-
-<h2>Interview Categories</h2>
-
-<div className="category-grid">
-
-{categories.map((category,index)=>(
-
-<div className="category-card" key={index}>
-
-<h3>{category}</h3>
-
-<p>Practice AI generated interview questions.</p>
-
-</div>
-
-))}
-
-</div>
-
-</section>
-
-);
-
+            <button
+              type="button"
+              className="category-btn"
+            >
+              Start Practice
+              <span>→</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export default InterviewCategories;

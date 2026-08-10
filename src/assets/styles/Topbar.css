@@ -1,34 +1,196 @@
+/* =========================================
+   TOPBAR
+========================================= */
+
 .topbar {
-  height: 80px;
-  background: white;
+  width: 100%;
+  height: 90px;
+  min-height: 90px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  box-shadow:
+    0 3px 12px rgba(15, 23, 42, 0.08);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   TOPBAR CONTENT
+========================================= */
+
+.topbar-content {
+  width: 100%;
+  height: 100%;
+
   display: flex;
-  justify-content: space-between;
+
   align-items: center;
+  justify-content: space-between;
+
   padding: 0 40px;
-  margin-left: 250px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
 }
 
-.topbar h1 {
+
+/* =========================================
+   LEFT / HEADING
+========================================= */
+
+.topbar-heading {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.topbar-heading h1 {
+  margin: 0 0 5px;
+
+  padding: 0;
+
   font-size: 28px;
+
+  line-height: 1.2;
+
+  font-weight: 700;
+
   color: #0f172a;
-  margin-bottom: 6px;
 }
 
-.topbar p {
-  color: #64748b;
+.topbar-heading p {
+  margin: 0;
+
+  padding: 0;
+
   font-size: 15px;
+
+  line-height: 1.4;
+
+  color: #64748b;
 }
+
+.topbar-heading p strong {
+  color: #0f172a;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   RIGHT / PROFILE
+========================================= */
 
 .topbar-profile {
   display: flex;
+
   align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  margin-left: 30px;
 }
 
 .topbar-profile img {
+  display: block;
+
   width: 50px;
   height: 50px;
+
   border-radius: 50%;
+
   object-fit: cover;
+
   border: 2px solid #2563eb;
+
+  background: #eff6ff;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 992px) {
+
+  .topbar-content {
+    padding: 0 25px;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .topbar {
+    height: 80px;
+    min-height: 80px;
+  }
+
+  .topbar-content {
+    padding: 0 20px;
+  }
+
+  .topbar-heading h1 {
+    font-size: 24px;
+
+    margin-bottom: 4px;
+  }
+
+  .topbar-heading p {
+    font-size: 13px;
+  }
+
+  .topbar-profile {
+    margin-left: 20px;
+  }
+
+  .topbar-profile img {
+    width: 44px;
+    height: 44px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .topbar {
+    height: 74px;
+    min-height: 74px;
+  }
+
+  .topbar-content {
+    padding: 0 15px;
+  }
+
+  .topbar-heading h1 {
+    font-size: 21px;
+  }
+
+  .topbar-heading p {
+    font-size: 12px;
+  }
+
+  .topbar-profile img {
+    width: 40px;
+    height: 40px;
+  }
+
 }

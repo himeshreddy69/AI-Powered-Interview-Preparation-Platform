@@ -1,5 +1,11 @@
+import ResumeCard from "../components/dashboard/ResumeCard";
+
 function Resume() {
-  return <h1>Upload Resume Page</h1>;
+  return (
+    <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto" }}>
+      <ResumeCard />
+    </div>
+  );
 }
 
 export default Resume;

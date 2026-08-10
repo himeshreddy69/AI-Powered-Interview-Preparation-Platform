@@ -1,33 +1,64 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaRobot } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import "../../assets/styles/Navbar.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function handleLogout() {
     await logout();
     navigate("/login", { replace: true });
   }
 
+  const handleNavClick = (e, targetId) => {
+    if (location.pathname !== "/") {
+      e.preventDefault();
+      navigate(`/#${targetId}`);
+      setTimeout(() => {
+        const elem = document.getElementById(targetId);
+        if (elem) {
+          elem.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const elem = document.getElementById(targetId);
+      if (elem) {
+        e.preventDefault();
+        elem.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <nav className="navbar">
-      <div className="navbar-logo">
+      <div className="navbar-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         <FaRobot className="logo-icon" />
         <h2>DEBIC</h2>
       </div>
 
       <div className="navbar-links">
         <Link to="/">Home</Link>
-        <a href="#features">Features</a>
-        <a href="#companies">Companies</a>
+        <a href="#features" onClick={(e) => handleNavClick(e, "features")}>Features</a>
+        <a href="#companies" onClick={(e) => handleNavClick(e, "companies")}>Companies</a>
         <Link to="/about">About</Link>
-        <a href="#contact">Contact</a>
+        <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}>Contact</a>
       </div>
 
-      <div className="nav-buttons">
+      <div className="nav-buttons" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <button
+          type="button"
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          title="Toggle Light / Dark Mode"
+        >
+          <span>{theme === "dark" ? "☀️ Light" : "🌙 Dark"}</span>
+        </button>
+
         {user ? (
           <>
             <Link to="/dashboard" className="login-btn">

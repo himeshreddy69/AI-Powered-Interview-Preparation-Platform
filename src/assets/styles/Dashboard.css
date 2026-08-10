@@ -1,92 +1,381 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f4f7fb;
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.dashboard-layout{
-  display:flex;
-  min-height:100vh;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f7fb;
+  overflow-x: hidden;
 }
 
-.dashboard-main{
-  margin-left:250px;
-  width:calc(100% - 250px);
-  min-height:100vh;
-  background:#f4f7fb;
+
+/* =========================================
+   DASHBOARD LAYOUT
+========================================= */
+
+.dashboard-layout {
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+
+  background: #f4f7fb;
 }
 
-.dashboard-content{
-  padding:30px;
+.dashboard-main {
+  margin-left: 250px;
+
+  width: calc(100% - 250px);
+
+  min-width: 0;
+  min-height: 100vh;
+
+  background: #f4f7fb;
+
+  box-sizing: border-box;
+
+  transition:
+    margin-left 0.25s ease,
+    width 0.25s ease;
 }
 
-.dashboard-page{
-  width:100%;
+.dashboard-layout.sidebar-collapsed .dashboard-main {
+  margin-left: 75px;
+  width: calc(100% - 75px);
 }
 
-.dashboard-grid{
-  margin-top:30px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-  gap:25px;
-  align-items:start;
+
+/* =========================================
+   DASHBOARD CONTENT
+========================================= */
+
+.dashboard-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  /*
+    Topbar is above this area.
+    This gives the dashboard a clean gap
+    below the Topbar.
+  */
+  padding: 36px 32px 48px;
+
+  box-sizing: border-box;
+
+  overflow-x: hidden;
 }
 
-.dashboard-card{
-  background:#ffffff;
-  border-radius:16px;
-  padding:25px;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
+.dashboard-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  margin: 0;
 }
 
-.dashboard-card h2{
-  color:#0f172a;
-  margin-bottom:15px;
+
+/* =========================================
+   DASHBOARD GRID
+========================================= */
+
+.dashboard-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 24px;
+
+  margin-top: 24px;
+
+  align-items: start;
+
+  width: 100%;
 }
 
-.dashboard-card p{
-  color:#64748b;
-  line-height:1.7;
+
+/* =========================================
+   COMMON CARD
+========================================= */
+
+.dashboard-card {
+  width: 100%;
+  min-width: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.dashboard-btn{
-  margin-top:20px;
-  padding:12px 20px;
-  border:none;
-  border-radius:10px;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
-  font-size:15px;
-  transition:.3s;
+.dashboard-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.07);
 }
 
-.dashboard-btn:hover{
-  background:#1d4ed8;
+
+/* =========================================
+   COMMON CARD TEXT
+========================================= */
+
+.dashboard-card h2 {
+  margin-bottom: 10px;
+
+  color: #0f172a;
+
+  font-size: 20px;
+
+  font-weight: 700;
 }
 
-@media(max-width:992px){
+.dashboard-card p {
+  color: #64748b;
 
-  .dashboard-main{
-    margin-left:0;
-    width:100%;
+  line-height: 1.6;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   DASHBOARD BUTTON
+========================================= */
+
+.dashboard-btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 18px;
+
+  padding: 11px 20px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-btn:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 12px rgba(37, 99, 235, 0.2);
+}
+
+
+/* =========================================
+   DASHBOARD SECTIONS
+========================================= */
+
+.dashboard-section {
+  width: 100%;
+  min-width: 0;
+
+  min-height: 400px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.dashboard-section h1 {
+  margin-bottom: 10px;
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.dashboard-section p {
+  color: #64748b;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   FULL WIDTH SECTIONS
+========================================= */
+
+.category-section,
+.performance-chart {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================
+   RECENT INTERVIEWS
+========================================= */
+
+.recent-interviews {
+  min-width: 0;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
 
+  .category-section,
+  .performance-chart {
+    grid-column: auto;
+  }
 }
 
-@media(max-width:768px){
 
-  .dashboard-content{
-    padding:20px;
+/* =========================================
+   992px
+========================================= */
+
+@media (max-width: 992px) {
+
+  .dashboard-main {
+    margin-left: 250px;
+
+    width: calc(100% - 250px);
   }
 
-  .dashboard-grid{
-    grid-template-columns:1fr;
+  .dashboard-layout.sidebar-collapsed .dashboard-main {
+    margin-left: 75px;
+
+    width: calc(100% - 75px);
   }
 
+  .dashboard-content {
+    padding: 32px 25px 40px;
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .dashboard-main {
+    margin-left: 75px;
+
+    width: calc(100% - 75px);
+  }
+
+  .dashboard-layout.sidebar-collapsed .dashboard-main {
+    margin-left: 75px;
+
+    width: calc(100% - 75px);
+  }
+
+  .dashboard-content {
+    padding: 28px 20px 36px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+
+    margin-top: 20px;
+  }
+
+  .dashboard-card {
+    padding: 22px;
+  }
+
+  .dashboard-section {
+    padding: 22px;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .dashboard-main {
+    margin-left: 75px;
+
+    width: calc(100% - 75px);
+  }
+
+  .dashboard-content {
+    padding: 24px 15px 30px;
+  }
+
+  .dashboard-card {
+    padding: 18px;
+
+    border-radius: 14px;
+  }
+
+  .dashboard-section {
+    padding: 18px;
+
+    border-radius: 14px;
+  }
+
+  .dashboard-section h1 {
+    font-size: 24px;
+  }
 }

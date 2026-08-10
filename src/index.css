@@ -1,0 +1,53 @@
+/* =========================================
+   GLOBAL PAGE RESET
+========================================= */
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+}
+
+/* =========================================
+   BOX SIZING
+========================================= */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+
+  background: #f4f7fb;
+
+  overflow-x: hidden;
+}
+
+/* =========================================
+   ROOT APP
+========================================= */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}

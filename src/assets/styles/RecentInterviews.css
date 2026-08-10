@@ -1,35 +1,236 @@
-.interview-list{
+/* =========================================
+   RECENT INTERVIEWS
+========================================= */
 
-list-style:none;
-
-margin-top:20px;
-
-padding:0;
-
+.recent-interviews {
+  background: #ffffff;
 }
 
-.interview-list li{
 
-display:flex;
+/* =========================================
+   HEADER
+========================================= */
 
-justify-content:space-between;
+.recent-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 
-padding:15px;
-
-border-bottom:1px solid #e2e8f0;
-
-font-size:16px;
-
+  margin-bottom: 12px;
 }
 
-.interview-list li:last-child{
+.recent-label {
+  display: block;
 
-border:none;
+  margin-bottom: 6px;
 
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  color: #2563eb;
 }
 
-.interview-list strong{
+.recent-header h2 {
+  margin: 0;
 
-color:#16a34a;
+  font-size: 20px;
+  font-weight: 700;
 
+  color: #0f172a;
+}
+
+
+/* =========================================
+   VIEW ALL
+========================================= */
+
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 6px 8px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #2563eb;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.view-all-btn:hover {
+  background: #eff6ff;
+}
+
+.view-all-btn span {
+  font-size: 14px;
+
+  transition: transform 0.2s ease;
+}
+
+.view-all-btn:hover span {
+  transform: translateX(2px);
+}
+
+
+/* =========================================
+   INTERVIEW LIST
+========================================= */
+
+.interview-list {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* =========================================
+   INTERVIEW ITEM
+========================================= */
+
+.interview-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.interview-item:last-child {
+  border-bottom: none;
+}
+
+
+/* =========================================
+   INTERVIEW INFO
+========================================= */
+
+.interview-info {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+/* =========================================
+   COMPANY ICON
+========================================= */
+
+.company-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   COMPANY DETAILS
+========================================= */
+
+.interview-info h3 {
+  margin: 0 0 4px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.interview-info p {
+  margin: 0;
+
+  font-size: 11px;
+
+  color: #64748b;
+
+  white-space: nowrap;
+}
+
+.interview-info p span {
+  color: #cbd5e1;
+}
+
+
+/* =========================================
+   SCORE
+========================================= */
+
+.interview-score {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  margin-left: 15px;
+}
+
+.interview-score strong {
+  font-size: 17px;
+  font-weight: 700;
+
+  color: #16a34a;
+}
+
+.interview-score span {
+  margin-top: 2px;
+
+  font-size: 10px;
+
+  color: #94a3b8;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+  .interview-item {
+    padding: 13px 0;
+  }
+
+  .company-icon {
+    width: 37px;
+    height: 37px;
+
+    font-size: 14px;
+  }
+
+  .interview-info p {
+    white-space: normal;
+  }
+
+  .interview-score strong {
+    font-size: 15px;
+  }
 }

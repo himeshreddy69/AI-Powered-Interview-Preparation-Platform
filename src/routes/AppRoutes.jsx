@@ -7,58 +7,38 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 
 import Dashboard from "../pages/Dashboard";
-import Profile from "../pages/Profile";
-import Resume from "../pages/Resume";
-import Interview from "../pages/Interview";
-import Results from "../pages/Results";
-import Settings from "../pages/Settings";
 
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
-
   return (
-
     <Routes>
 
       {/* Home */}
-
       <Route
         path="/"
         element={<Home />}
       />
 
-
-
       {/* About */}
-
       <Route
         path="/about"
         element={<About />}
       />
 
-
-
       {/* Login */}
-
       <Route
         path="/login"
         element={<Login />}
       />
 
-
-
       {/* Register */}
-
       <Route
         path="/register"
         element={<Register />}
       />
 
-
-
       {/* Signup Redirect */}
-
       <Route
         path="/signup"
         element={
@@ -69,19 +49,13 @@ function AppRoutes() {
         }
       />
 
-
-
       {/* Forgot Password */}
-
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
       />
 
-
-
       {/* Dashboard */}
-
       <Route
         path="/dashboard"
         element={
@@ -91,84 +65,19 @@ function AppRoutes() {
         }
       />
 
-
-
-      {/* Profile */}
-
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-
-
-
-      {/* Upload Resume */}
-
-      <Route
-        path="/upload-resume"
-        element={
-          <ProtectedRoute>
-            <Resume />
-          </ProtectedRoute>
-        }
-      />
-
-
-
-      {/* Interview */}
-
-      <Route
-        path="/interview"
-        element={
-          <ProtectedRoute>
-            <Interview />
-          </ProtectedRoute>
-        }
-      />
-
-
-
-      {/* Results */}
-
-      <Route
-        path="/results"
-        element={
-          <ProtectedRoute>
-            <Results />
-          </ProtectedRoute>
-        }
-      />
-
-
-
-      {/* Settings */}
-
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-
-
-
       {/* Unknown Route */}
-
       <Route
         path="*"
-        element={<Navigate to="/" replace />}
+        element={
+          <Navigate
+            to="/"
+            replace
+          />
+        }
       />
 
     </Routes>
-
   );
-
 }
 
 export default AppRoutes;

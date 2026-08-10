@@ -1,7 +1,6 @@
 import "../../assets/styles/CompanySection.css";
 
 function CompanySection() {
-
   const companies = [
     "Google",
     "Amazon",
@@ -16,23 +15,17 @@ function CompanySection() {
   ];
 
   return (
-
-    <section className="company-section">
-
+    <section className="company-section" id="companies">
       <h2>Top Interview Companies</h2>
 
       <div className="company-grid">
-
-        {companies.map((company,index)=>(
+        {companies.map((company, index) => (
           <div className="company-card" key={index}>
             {company}
           </div>
         ))}
-
       </div>
-
     </section>
-
   );
 }
 

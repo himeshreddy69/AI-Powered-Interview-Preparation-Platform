@@ -1,33 +1,107 @@
-.welcome-card{
+/* =========================================
+   WELCOME CARD
+========================================= */
 
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
+.welcome-card {
+  width: 100%;
 
-color:white;
+  background: linear-gradient(
+    135deg,
+    #eff6ff 0%,
+    #ffffff 100%
+  );
 
-border-radius:16px;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
 
-padding:35px;
+  padding: 42px 50px;
+  margin-bottom: 24px;
 
-margin-bottom:30px;
+  text-align: center;
 
-box-shadow:0 10px 30px rgba(37,99,235,.25);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.welcome-card h2{
+.welcome-card:hover {
+  transform: translateY(-2px);
 
-font-size:32px;
-
-margin-bottom:15px;
-
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.07);
 }
 
-.welcome-card p{
 
-font-size:17px;
+/* =========================================
+   WELCOME TITLE
+========================================= */
 
-line-height:1.8;
+.welcome-card h2 {
+  margin: 0 0 12px;
 
-color:#e2e8f0;
+  font-size: 32px;
+  font-weight: 700;
 
+  color: #0f172a;
+}
+
+.welcome-card h2::first-letter {
+  color: #2563eb;
+}
+
+
+/* =========================================
+   WELCOME DESCRIPTION
+========================================= */
+
+.welcome-card p {
+  max-width: 760px;
+
+  margin: 0 auto;
+
+  font-size: 15px;
+  line-height: 1.7;
+
+  color: #64748b;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+  .welcome-card {
+    padding: 35px 25px;
+  }
+
+  .welcome-card h2 {
+    font-size: 27px;
+  }
+
+  .welcome-card p {
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 30px 20px;
+    border-radius: 14px;
+  }
+
+  .welcome-card h2 {
+    font-size: 24px;
+  }
+
+  .welcome-card p {
+    font-size: 13px;
+  }
 }
