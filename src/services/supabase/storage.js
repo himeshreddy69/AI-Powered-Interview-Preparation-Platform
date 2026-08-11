@@ -12,7 +12,14 @@ export async function uploadResume(file, uid) {
 
   if (error) throw error;
 
-  return data.path;
+  const { data: publicData } = supabase.storage
+    .from("resumes")
+    .getPublicUrl(fileName);
+
+  return {
+    path: data.path,
+    publicUrl: publicData.publicUrl
+  };
 }
 
 export async function uploadProfileImage(file, uid) {

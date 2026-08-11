@@ -7,6 +7,7 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 
 import Dashboard from "../pages/Dashboard";
+import Results from "../pages/Results";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -61,6 +62,16 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Results */}
+      <Route
+        path="/results"
+        element={
+          <ProtectedRoute>
+            <Results />
           </ProtectedRoute>
         }
       />

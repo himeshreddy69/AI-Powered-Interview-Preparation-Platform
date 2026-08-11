@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaFileAlt,
@@ -22,6 +23,8 @@ function Sidebar({
   collapsed,
   setCollapsed,
 }) {
+  const navigate = useNavigate();
+
   const menu = [
     {
       name: "Dashboard",
@@ -75,6 +78,14 @@ function Sidebar({
     },
   ];
 
+  const handleMenuClick = (section) => {
+    setActiveSection(section);
+
+    if (section === "results") {
+      navigate("/results");
+    }
+  };
+
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <button
@@ -97,7 +108,7 @@ function Sidebar({
             key={item.name}
             type="button"
             className={activeSection === item.section ? "active" : ""}
-            onClick={() => setActiveSection(item.section)}
+            onClick={() => handleMenuClick(item.section)}
             title={collapsed ? item.name : ""}
           >
             <span className="sidebar-icon">{item.icon}</span>
