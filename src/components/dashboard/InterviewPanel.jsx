@@ -3,27 +3,43 @@ import { useAuth } from "../../context/AuthContext";
 import { generateInterviewQuestions } from "../../services/ai/interviewGenerator";
 import { evaluateInterviewSession } from "../../services/ai/feedbackGenerator";
 import { getUserResume } from "../../services/firebase/firestore";
+import { saveInterviewResult } from "../../services/supabase/interviewResults";
 import "../../assets/styles/InterviewPanel.css";
 
 function InterviewPanel({ onCompleteSession }) {
   const { user } = useAuth();
 
-  const [selectedType, setSelectedType] = useState("Technical Interview");
-  const [targetRole, setTargetRole] = useState("Software Engineer");
+  const [selectedType, setSelectedType] = useState(
+    "Technical Interview"
+  );
+
+  const [targetRole, setTargetRole] = useState(
+    "Software Engineer"
+  );
+
   const [questionCount, setQuestionCount] = useState(5);
+
   const [resumeData, setResumeData] = useState(null);
 
   const [stage, setStage] = useState("setup");
+
   const [questions, setQuestions] = useState([]);
+
   const [currentIdx, setCurrentIdx] = useState(0);
+
   const [userAnswers, setUserAnswers] = useState({});
 
   const [isRecording, setIsRecording] = useState(false);
+
   const recognitionRef = useRef(null);
 
   const [timeLeft, setTimeLeft] = useState(900);
+
   const [showHint, setShowHint] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
+
+  const submittingRef = useRef(false);
 
   const interviewTypes = [
     {
@@ -52,9 +68,11 @@ function InterviewPanel({ onCompleteSession }) {
     },
   ];
 
-  /* =========================
-     LOAD RESUME
-  ========================= */
+  /*
+   * =========================
+   * LOAD USER RESUME
+   * =========================
+   */
 
   useEffect(() => {
     async function loadResume() {
@@ -78,12 +96,18 @@ function InterviewPanel({ onCompleteSession }) {
     loadResume();
   }, [user]);
 
-  /* =========================
-     TIMER
-  ========================= */
+  /*
+   * =========================
+   * INTERVIEW TIMER
+   * =========================
+   */
 
   useEffect(() => {
-    if (stage !== "interview" || timeLeft <= 0) {
+    if (
+      stage !== "interview" ||
+      timeLeft <= 0 ||
+      submitting
+    ) {
       return;
     }
 
@@ -99,25 +123,29 @@ function InterviewPanel({ onCompleteSession }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [stage, timeLeft]);
+  }, [stage, timeLeft, submitting]);
 
-  /* =========================
-     AUTO SUBMIT WHEN TIMER ENDS
-  ========================= */
+  /*
+   * =========================
+   * AUTOMATIC SUBMIT
+   * =========================
+   */
 
   useEffect(() => {
     if (
       stage === "interview" &&
       timeLeft === 0 &&
-      !submitting
+      !submittingRef.current
     ) {
       handleSubmitInterview(true);
     }
   }, [timeLeft, stage]);
 
-  /* =========================
-     SPEECH RECOGNITION
-  ========================= */
+  /*
+   * =========================
+   * SPEECH RECOGNITION
+   * =========================
+   */
 
   useEffect(() => {
     const SpeechRecognition =
@@ -180,9 +208,11 @@ function InterviewPanel({ onCompleteSession }) {
     };
   }, [questions, currentIdx]);
 
-  /* =========================
-     VOICE RECORDING
-  ========================= */
+  /*
+   * =========================
+   * VOICE RECORDING
+   * =========================
+   */
 
   const toggleVoiceRecording = () => {
     if (!recognitionRef.current) {
@@ -193,7 +223,12 @@ function InterviewPanel({ onCompleteSession }) {
     }
 
     if (isRecording) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // already stopped
+      }
+
       setIsRecording(false);
       return;
     }
@@ -202,7 +237,10 @@ function InterviewPanel({ onCompleteSession }) {
       recognitionRef.current.start();
       setIsRecording(true);
     } catch (error) {
-      console.error("Could not start voice recognition:", error);
+      console.error(
+        "Could not start voice recognition:",
+        error
+      );
     }
   };
 
@@ -218,9 +256,11 @@ function InterviewPanel({ onCompleteSession }) {
     setIsRecording(false);
   };
 
-  /* =========================
-     START INTERVIEW
-  ========================= */
+  /*
+   * =========================
+   * START INTERVIEW
+   * =========================
+   */
 
   const handleStartInterview = async () => {
     if (!targetRole.trim()) {
@@ -231,21 +271,29 @@ function InterviewPanel({ onCompleteSession }) {
     setStage("generating");
 
     try {
-      const generated = await generateInterviewQuestions({
-        category: selectedType,
-        role: targetRole.trim(),
-        resumeText: resumeData?.rawText || "",
-        questionCount: Number(questionCount),
-      });
+      const generated =
+        await generateInterviewQuestions({
+          category: selectedType,
+          role: targetRole.trim(),
+          resumeText: resumeData?.rawText || "",
+          questionCount: Number(questionCount),
+        });
 
-      if (!Array.isArray(generated) || generated.length === 0) {
-        throw new Error("No interview questions were generated.");
+      if (
+        !Array.isArray(generated) ||
+        generated.length === 0
+      ) {
+        throw new Error(
+          "No interview questions were generated."
+        );
       }
 
-      const normalizedQuestions = generated.map((question, index) => ({
-        ...question,
-        id: question.id || index + 1,
-      }));
+      const normalizedQuestions = generated.map(
+        (question, index) => ({
+          ...question,
+          id: question.id || index + 1,
+        })
+      );
 
       setQuestions(normalizedQuestions);
       setCurrentIdx(0);
@@ -256,7 +304,10 @@ function InterviewPanel({ onCompleteSession }) {
 
       setStage("interview");
     } catch (error) {
-      console.error("Question generation error:", error);
+      console.error(
+        "Question generation error:",
+        error
+      );
 
       alert(
         "Failed to generate interview questions. Please try again."
@@ -266,9 +317,11 @@ function InterviewPanel({ onCompleteSession }) {
     }
   };
 
-  /* =========================
-     ANSWER CHANGE
-  ========================= */
+  /*
+   * =========================
+   * ANSWER CHANGE
+   * =========================
+   */
 
   const handleAnswerChange = (text) => {
     const currentQuestion = questions[currentIdx];
@@ -283,9 +336,11 @@ function InterviewPanel({ onCompleteSession }) {
     }));
   };
 
-  /* =========================
-     NEXT
-  ========================= */
+  /*
+   * =========================
+   * NEXT QUESTION
+   * =========================
+   */
 
   const handleNext = () => {
     setShowHint(false);
@@ -296,9 +351,11 @@ function InterviewPanel({ onCompleteSession }) {
     }
   };
 
-  /* =========================
-     PREVIOUS
-  ========================= */
+  /*
+   * =========================
+   * PREVIOUS QUESTION
+   * =========================
+   */
 
   const handlePrev = () => {
     setShowHint(false);
@@ -309,87 +366,185 @@ function InterviewPanel({ onCompleteSession }) {
     }
   };
 
-  /* =========================
-     SUBMIT INTERVIEW
-  ========================= */
+  /*
+   * =========================
+   * SAVE RESULT TO SUPABASE
+   * =========================
+   */
 
-  const handleSubmitInterview = async (automaticSubmit = false) => {
-    if (submitting) return;
+  const saveResultSafely = async (result) => {
+  if (!user?.uid) {
+    console.error("NO USER UID");
+    return result;
+  }
 
-    stopRecording();
+  try {
+    const savedResult = await saveInterviewResult(
+      user.uid,
+      result
+    );
 
-    const normalizedQnaList = questions.map((question, index) => {
-      const questionId = question.id || index + 1;
+    console.log(
+      "INTERVIEW RESULT SAVED TO SUPABASE:",
+      savedResult
+    );
 
-      return {
-        id: questionId,
-        question: question.question || "",
-        hints: question.hints || [],
-        userAnswer: userAnswers[questionId] || "",
-      };
-    });
+    return savedResult || result;
+  } catch (error) {
+    console.error(
+      "SUPABASE SAVE INTERVIEW RESULT ERROR:",
+      error
+    );
 
-    const answeredCount = normalizedQnaList.filter(
-      (item) =>
-        typeof item.userAnswer === "string" &&
-        item.userAnswer.trim().length > 0
-    ).length;
+    throw error;
+  }
+};
 
-    if (!automaticSubmit && answeredCount === 0) {
-      alert(
-        "Please answer at least one question before submitting."
-      );
+  /*
+   * =========================
+   * SUBMIT INTERVIEW
+   * =========================
+   */
+
+  const handleSubmitInterview = async (
+    automaticSubmit = false
+  ) => {
+    if (submittingRef.current) {
       return;
     }
 
+    submittingRef.current = true;
     setSubmitting(true);
+
+    stopRecording();
+
+    /*
+     * BUILD Q&A LIST
+     */
+
+    const normalizedQnaList =
+      questions.map((question, index) => {
+        const questionId =
+          question.id || index + 1;
+
+        return {
+          id: questionId,
+
+          question:
+            question.question || "",
+
+          hints:
+            question.hints || [],
+
+          userAnswer:
+            userAnswers[questionId] || "",
+        };
+      });
+
+    /*
+     * COUNT ANSWERED QUESTIONS
+     */
+
+    const answeredCount =
+      normalizedQnaList.filter(
+        (item) =>
+          typeof item.userAnswer ===
+            "string" &&
+          item.userAnswer.trim().length > 0
+      ).length;
+
+    /*
+     * PREVENT EMPTY SUBMISSION
+     */
+
+    if (
+      !automaticSubmit &&
+      answeredCount === 0
+    ) {
+      submittingRef.current = false;
+      setSubmitting(false);
+
+      alert(
+        "Please answer at least one question before submitting."
+      );
+
+      return;
+    }
+
+    /*
+     * SHOW EVALUATING SCREEN
+     */
+
     setStage("evaluating");
 
     try {
-      /* =========================
-         AI EVALUATION
-      ========================= */
+      /*
+       * AI EVALUATION
+       */
 
-      const evalResult = await evaluateInterviewSession({
-        category: selectedType,
-        role: targetRole,
-        qnaList: normalizedQnaList,
-      });
+      const evalResult =
+        await evaluateInterviewSession({
+          category: selectedType,
 
-      /* =========================
-         FINAL RESULT
-      ========================= */
+          role: targetRole,
+
+          qnaList: normalizedQnaList,
+        });
+
+      console.log(
+        "AI EVALUATION RESULT:",
+        evalResult
+      );
+
+      /*
+       * OVERALL SCORE
+       */
 
       const overallScore =
-        Number(evalResult?.overallScore) || 0;
+        Number(
+          evalResult?.overallScore
+        ) || 0;
+
+      /*
+       * FINAL RESULT
+       */
 
       const finalResult = {
-        id: `session-${Date.now()}`,
-
         category: selectedType,
 
         role: targetRole,
 
-        questionsCount: questions.length,
+        questionsCount:
+          questions.length,
+
+        answeredCount,
 
         overallScore,
 
         technicalScore:
-          Number(evalResult?.technicalScore) || overallScore,
+          Number(
+            evalResult?.technicalScore
+          ) || overallScore,
 
         communicationScore:
-          Number(evalResult?.communicationScore) || overallScore,
+          Number(
+            evalResult?.communicationScore
+          ) || overallScore,
 
         problemSolvingScore:
-          Number(evalResult?.problemSolvingScore) || overallScore,
+          Number(
+            evalResult?.problemSolvingScore
+          ) || overallScore,
 
         verdict:
           evalResult?.verdict ||
-          (overallScore >= 80
-            ? "Hire"
-            : overallScore >= 65
-            ? "Strong Consider"
-            : "Needs Practice"),
+          (
+            overallScore >= 80
+              ? "Hire"
+              : overallScore >= 65
+              ? "Strong Consider"
+              : "Needs Practice"
+          ),
 
         summary:
           evalResult?.summary ||
@@ -401,56 +556,91 @@ function InterviewPanel({ onCompleteSession }) {
           "",
 
         strengths:
-          Array.isArray(evalResult?.strengths)
+          Array.isArray(
+            evalResult?.strengths
+          )
             ? evalResult.strengths
             : [],
 
         weaknesses:
-          Array.isArray(evalResult?.weaknesses)
+          Array.isArray(
+            evalResult?.weaknesses
+          )
             ? evalResult.weaknesses
             : [],
 
         improvements:
-          Array.isArray(evalResult?.improvements)
+          Array.isArray(
+            evalResult?.improvements
+          )
             ? evalResult.improvements
             : [],
 
         recommendations:
-          Array.isArray(evalResult?.recommendations)
+          Array.isArray(
+            evalResult?.recommendations
+          )
             ? evalResult.recommendations
             : [],
 
         questionFeedback:
-          Array.isArray(evalResult?.questionFeedback)
+          Array.isArray(
+            evalResult?.questionFeedback
+          )
             ? evalResult.questionFeedback
             : [],
 
-        qnaList: normalizedQnaList,
+        qnaList:
+          normalizedQnaList,
 
-        completedAutomatically: automaticSubmit,
+        completedAutomatically:
+          automaticSubmit,
 
-        createdAt: new Date().toISOString(),
+        createdAt:
+          new Date().toISOString(),
       };
 
-      console.log("FINAL INTERVIEW RESULT:", finalResult);
+      console.log(
+        "FINAL INTERVIEW RESULT:",
+        finalResult
+      );
 
-      /* =========================
-         NO DATABASE FOR NOW
-         
-         Directly send result to Dashboard
-      ========================= */
+      /*
+       * SAVE TO SUPABASE
+       *
+       * If Supabase works:
+       * savedResult = database row
+       *
+       * If Supabase fails:
+       * savedResult = finalResult
+       *
+       * Either way the user gets the result.
+       */
+
+      const savedResult =
+        await saveResultSafely(
+          finalResult
+        );
+
+      console.log(
+        "FINAL RESULT READY:",
+        savedResult
+      );
+
+      /*
+       * OPEN RESULTS PAGE
+       */
 
       if (onCompleteSession) {
-        onCompleteSession(finalResult);
-      } else {
-        setStage("setup");
-
-        alert(
-          `Interview completed! Your score is ${overallScore}%.`
-        );
+        onCompleteSession(savedResult);
       }
+
+      setStage("setup");
     } catch (error) {
-      console.error("Interview evaluation error:", error);
+      console.error(
+        "Interview evaluation error:",
+        error
+      );
 
       alert(
         "We could not evaluate this interview. Please try again."
@@ -458,22 +648,28 @@ function InterviewPanel({ onCompleteSession }) {
 
       setStage("setup");
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
 
-  /* =========================
-     EXIT
-  ========================= */
+  /*
+   * =========================
+   * EXIT INTERVIEW
+   * =========================
+   */
 
   const handleExitInterview = () => {
     stopRecording();
 
-    const confirmed = window.confirm(
-      "Are you sure you want to exit? Your current interview progress will be lost."
-    );
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to exit? Your current interview progress will be lost."
+      );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     setQuestions([]);
     setUserAnswers({});
@@ -481,24 +677,33 @@ function InterviewPanel({ onCompleteSession }) {
     setShowHint(false);
     setTimeLeft(900);
     setStage("setup");
+
+    submittingRef.current = false;
+    setSubmitting(false);
   };
 
-  /* =========================
-     TIMER FORMAT
-  ========================= */
+  /*
+   * =========================
+   * TIMER FORMAT
+   * =========================
+   */
 
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
 
-    return `${mins.toString().padStart(2, "0")}:${secs
+    return `${mins
+      .toString()
+      .padStart(2, "0")}:${secs
       .toString()
       .padStart(2, "0")}`;
   };
 
-  /* =========================
-     GENERATING
-  ========================= */
+  /*
+   * =========================
+   * GENERATING SCREEN
+   * =========================
+   */
 
   if (stage === "generating") {
     return (
@@ -536,7 +741,8 @@ function InterviewPanel({ onCompleteSession }) {
           }}
         >
           Gemini AI is creating{" "}
-          {selectedType.toLowerCase()} questions for your{" "}
+          {selectedType.toLowerCase()} questions
+          for your{" "}
           <strong>{targetRole}</strong> role.
         </p>
 
@@ -548,16 +754,19 @@ function InterviewPanel({ onCompleteSession }) {
             border: "4px solid #dbeafe",
             borderTopColor: "#2563eb",
             borderRadius: "50%",
-            animation: "spin 1s linear infinite",
+            animation:
+              "spin 1s linear infinite",
           }}
         />
       </div>
     );
   }
 
-  /* =========================
-     EVALUATING
-  ========================= */
+  /*
+   * =========================
+   * EVALUATING SCREEN
+   * =========================
+   */
 
   if (stage === "evaluating") {
     return (
@@ -594,8 +803,9 @@ function InterviewPanel({ onCompleteSession }) {
             margin: "0 auto 30px",
           }}
         >
-          AI is analyzing your answers, technical knowledge,
-          communication and problem-solving ability.
+          AI is analyzing your answers,
+          technical knowledge, communication
+          and problem-solving ability.
         </p>
 
         <div
@@ -606,37 +816,45 @@ function InterviewPanel({ onCompleteSession }) {
             border: "4px solid #dbeafe",
             borderTopColor: "#2563eb",
             borderRadius: "50%",
-            animation: "spin 1s linear infinite",
+            animation:
+              "spin 1s linear infinite",
           }}
         />
       </div>
     );
   }
 
-  /* =========================
-     LIVE INTERVIEW
-  ========================= */
+  /*
+   * =========================
+   * LIVE INTERVIEW SCREEN
+   * =========================
+   */
 
   if (stage === "interview") {
-    const currentQ = questions[currentIdx] || {
-      question: "Loading...",
-    };
+    const currentQ =
+      questions[currentIdx] || {
+        question: "Loading...",
+      };
 
-    const currentQId = currentQ.id || currentIdx + 1;
+    const currentQId =
+      currentQ.id || currentIdx + 1;
 
-    const currentAnswer = userAnswers[currentQId] || "";
+    const currentAnswer =
+      userAnswers[currentQId] || "";
 
     return (
       <div className="interview-screen">
-
         <div className="interview-screen-header">
           <div>
-            <span>LIVE AI MOCK INTERVIEW</span>
+            <span>
+              LIVE AI MOCK INTERVIEW
+            </span>
 
             <h1>{selectedType}</h1>
 
             <p>
-              Target Role: <strong>{targetRole}</strong>
+              Target Role:{" "}
+              <strong>{targetRole}</strong>
             </p>
           </div>
 
@@ -644,9 +862,14 @@ function InterviewPanel({ onCompleteSession }) {
             className="interview-timer"
             style={{
               color:
-                timeLeft < 180 ? "#dc2626" : "#2563eb",
+                timeLeft < 180
+                  ? "#dc2626"
+                  : "#2563eb",
+
               borderColor:
-                timeLeft < 180 ? "#fca5a5" : "#dbeafe",
+                timeLeft < 180
+                  ? "#fca5a5"
+                  : "#dbeafe",
             }}
           >
             ⏱️ {formatTimer(timeLeft)}
@@ -666,13 +889,12 @@ function InterviewPanel({ onCompleteSession }) {
               fontWeight: "600",
             }}
           >
-            ⏰ Time is up. Your interview is being submitted
-            automatically.
+            ⏰ Time is up. Your interview
+            is being submitted automatically.
           </div>
         )}
 
         <div className="question-card">
-
           <div
             style={{
               display: "flex",
@@ -681,7 +903,8 @@ function InterviewPanel({ onCompleteSession }) {
             }}
           >
             <span className="question-number">
-              QUESTION {currentIdx + 1} OF {questions.length}
+              QUESTION {currentIdx + 1} OF{" "}
+              {questions.length}
             </span>
 
             {currentQ.difficulty && (
@@ -704,10 +927,16 @@ function InterviewPanel({ onCompleteSession }) {
 
           {currentQ.hints &&
             currentQ.hints.length > 0 && (
-              <div style={{ marginBottom: "16px" }}>
+              <div
+                style={{
+                  marginBottom: "16px",
+                }}
+              >
                 <button
                   type="button"
-                  onClick={() => setShowHint(!showHint)}
+                  onClick={() =>
+                    setShowHint(!showHint)
+                  }
                   style={{
                     background: "none",
                     border: "none",
@@ -730,7 +959,8 @@ function InterviewPanel({ onCompleteSession }) {
                       marginTop: "8px",
                       padding: "12px",
                       background: "#f0fdf4",
-                      border: "1px solid #bbf7d0",
+                      border:
+                        "1px solid #bbf7d0",
                       borderRadius: "8px",
                       fontSize: "13px",
                       color: "#166534",
@@ -746,7 +976,9 @@ function InterviewPanel({ onCompleteSession }) {
             placeholder="Type or speak your answer here..."
             value={currentAnswer}
             onChange={(event) =>
-              handleAnswerChange(event.target.value)
+              handleAnswerChange(
+                event.target.value
+              )
             }
           />
 
@@ -803,7 +1035,6 @@ function InterviewPanel({ onCompleteSession }) {
           </div>
 
           <div className="question-actions">
-
             <button
               type="button"
               className="secondary-btn"
@@ -825,7 +1056,8 @@ function InterviewPanel({ onCompleteSession }) {
               Exit
             </button>
 
-            {currentIdx < questions.length - 1 ? (
+            {currentIdx <
+            questions.length - 1 ? (
               <button
                 type="button"
                 className="start-interview-btn"
@@ -837,7 +1069,9 @@ function InterviewPanel({ onCompleteSession }) {
               <button
                 type="button"
                 className="start-interview-btn"
-                onClick={() => handleSubmitInterview(false)}
+                onClick={() =>
+                  handleSubmitInterview(false)
+                }
                 disabled={submitting}
                 style={{
                   background: "#16a34a",
@@ -848,28 +1082,32 @@ function InterviewPanel({ onCompleteSession }) {
                   : "Submit & Finish Interview ✓"}
               </button>
             )}
-
           </div>
         </div>
       </div>
     );
   }
 
-  /* =========================
-     SETUP
-  ========================= */
+  /*
+   * =========================
+   * SETUP SCREEN
+   * =========================
+   */
 
   return (
     <section className="interview-panel">
-
       <div className="interview-panel-header">
-        <span>AI MOCK INTERVIEW GENERATOR</span>
+        <span>
+          AI MOCK INTERVIEW GENERATOR
+        </span>
 
         <h1>Start an AI Mock Interview</h1>
 
         <p>
-          Select an interview category, specify your target role,
-          and practice with AI-generated questions.
+          Select an interview category,
+          specify your target role, and
+          practice with AI-generated
+          questions.
         </p>
       </div>
 
@@ -893,8 +1131,12 @@ function InterviewPanel({ onCompleteSession }) {
             }}
           >
             <strong>Resume Connected:</strong>{" "}
-            AI will tailor questions matching your profile as{" "}
-            <strong>{resumeData.jobTitle}</strong>.
+            AI will tailor questions matching
+            your profile as{" "}
+            <strong>
+              {resumeData.jobTitle}
+            </strong>
+            .
           </div>
 
           <span
@@ -907,7 +1149,8 @@ function InterviewPanel({ onCompleteSession }) {
               fontWeight: "600",
             }}
           >
-            {resumeData.skills?.length || 0} Skills Loaded
+            {resumeData.skills?.length || 0}{" "}
+            Skills Loaded
           </span>
         </div>
       )}
@@ -944,7 +1187,8 @@ function InterviewPanel({ onCompleteSession }) {
               width: "100%",
               padding: "10px 14px",
               borderRadius: "8px",
-              border: "1px solid #cbd5e1",
+              border:
+                "1px solid #cbd5e1",
               fontSize: "14px",
               outline: "none",
               boxSizing: "border-box",
@@ -968,13 +1212,16 @@ function InterviewPanel({ onCompleteSession }) {
           <select
             value={questionCount}
             onChange={(event) =>
-              setQuestionCount(Number(event.target.value))
+              setQuestionCount(
+                Number(event.target.value)
+              )
             }
             style={{
               width: "100%",
               padding: "10px 14px",
               borderRadius: "8px",
-              border: "1px solid #cbd5e1",
+              border:
+                "1px solid #cbd5e1",
               fontSize: "14px",
               outline: "none",
               background: "#ffffff",
@@ -1002,9 +1249,13 @@ function InterviewPanel({ onCompleteSession }) {
             type="button"
             key={type.name}
             className={`interview-type-card ${
-              selectedType === type.name ? "selected" : ""
+              selectedType === type.name
+                ? "selected"
+                : ""
             }`}
-            onClick={() => setSelectedType(type.name)}
+            onClick={() =>
+              setSelectedType(type.name)
+            }
           >
             <div className="interview-type-icon">
               {type.icon}
@@ -1018,7 +1269,6 @@ function InterviewPanel({ onCompleteSession }) {
       </div>
 
       <div className="interview-start-area">
-
         <div>
           <p>
             Selected Mode:{" "}
@@ -1031,7 +1281,8 @@ function InterviewPanel({ onCompleteSession }) {
               color: "#94a3b8",
             }}
           >
-            Role: {targetRole} · {questionCount} Questions
+            Role: {targetRole} ·{" "}
+            {questionCount} Questions
           </p>
         </div>
 
@@ -1042,7 +1293,6 @@ function InterviewPanel({ onCompleteSession }) {
         >
           Start AI Interview →
         </button>
-
       </div>
     </section>
   );

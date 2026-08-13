@@ -58,23 +58,20 @@ function Login() {
 
   // Google Login Function
   const handleGoogleLogin = async () => {
+  setError("");
+  setSubmitting(true);
 
-    try {
+  try {
+    await loginWithGoogle();
 
-      await loginWithGoogle();
-
-      navigate("/dashboard");
-
-    } 
-    catch(error) {
-
-      setError(
-        "Google login failed"
-      );
-
-    }
-
-  };
+    navigate(destination, { replace: true });
+  } catch (error) {
+    console.error("Google login error:", error);
+    setError(getAuthErrorMessage(error));
+  } finally {
+    setSubmitting(false);
+  }
+};
 
 
 

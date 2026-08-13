@@ -2,70 +2,173 @@ import { GoogleGenAI } from "@google/genai";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 
-export const isGeminiConfigured = Boolean(apiKey && apiKey.trim() !== "");
+export const isGeminiConfigured =
+  Boolean(apiKey && apiKey.trim() !== "");
 
 let aiClient = null;
 
 if (isGeminiConfigured) {
   try {
-    aiClient = new GoogleGenAI({ apiKey });
-  } catch (err) {
-    console.warn("Failed to initialize Gemini AI client:", err);
+    aiClient = new GoogleGenAI({
+      apiKey: apiKey.trim(),
+    });
+  } catch (error) {
+    console.warn(
+      "Failed to initialize Gemini AI client:",
+      error
+    );
   }
 }
 
-/**
- * Generate JSON response from Gemini API using gemini-2.5-flash
- */
-export async function generateJSONResponse(prompt, fallbackData = null) {
+/* =========================================
+   JSON RESPONSE
+========================================= */
+
+export async function generateJSONResponse(
+  prompt,
+  fallbackData = null
+) {
   if (!aiClient || !isGeminiConfigured) {
-    console.info("Using Fallback Mock AI Engine (VITE_GEMINI_API_KEY not configured or unavailable).");
-    if (fallbackData) return fallbackData;
-    throw new Error("Gemini API key is not configured in .env");
+    console.warn(
+      "Gemini API key not configured. Using fallback evaluation."
+    );
+
+    if (fallbackData !== null) {
+      return fallbackData;
+    }
+
+    throw new Error(
+      "Gemini API key is not configured."
+    );
   }
 
   try {
-    const response = await aiClient.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await Promise.race([
+      aiClient.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+        },
+      }),
 
-    const text = response.text;
-    if (!text) throw new Error("Empty response received from Gemini API");
+      new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error(
+              "Gemini request timed out."
+            )
+          );
+        }, 10000);
+      }),
+    ]);
 
-    // Clean JSON response if wrapped in markdown code blocks
-    const cleanedText = text.replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
-    return JSON.parse(cleanedText);
+    const text = response?.text;
+
+    if (!text) {
+      throw new Error(
+        "Gemini returned an empty response."
+      );
+    }
+
+    let cleanedText = text.trim();
+
+    if (cleanedText.startsWith("```json")) {
+      cleanedText = cleanedText
+        .replace(/^```json/i, "")
+        .replace(/```$/i, "")
+        .trim();
+    }
+
+    if (cleanedText.startsWith("```")) {
+      cleanedText = cleanedText
+        .replace(/^```/i, "")
+        .replace(/```$/i, "")
+        .trim();
+    }
+
+    try {
+      return JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error(
+        "Gemini returned invalid JSON:",
+        cleanedText
+      );
+
+      throw new Error(
+        "Gemini returned invalid JSON."
+      );
+    }
   } catch (error) {
-    console.error("Gemini API Request Error:", error);
-    if (fallbackData) {
-      console.info("Using fallback mock data due to API error.");
+    console.error(
+      "Gemini API Request Error:",
+      error
+    );
+
+    if (fallbackData !== null) {
+      console.warn(
+        "Using fallback data instead."
+      );
+
       return fallbackData;
     }
+
     throw error;
   }
 }
 
-/**
- * Generate plain text response from Gemini API
- */
-export async function generateTextResponse(prompt, fallbackText = "") {
+/* =========================================
+   TEXT RESPONSE
+========================================= */
+
+export async function generateTextResponse(
+  prompt,
+  fallbackText = ""
+) {
   if (!aiClient || !isGeminiConfigured) {
-    return fallbackText || "Mock AI Response: Please configure VITE_GEMINI_API_KEY for live AI responses.";
+    console.warn(
+      "Gemini API key not configured. Using fallback text."
+    );
+
+    return (
+      fallbackText ||
+      "AI service is not configured."
+    );
   }
 
   try {
-    const response = await aiClient.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-    return response.text || fallbackText;
+    const response = await Promise.race([
+      aiClient.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+      }),
+
+      new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error(
+              "Gemini text request timed out."
+            )
+          );
+        }, 10000);
+      }),
+    ]);
+
+    return (
+      response?.text ||
+      fallbackText ||
+      "Unable to generate AI response."
+    );
   } catch (error) {
-    console.error("Gemini API Text Generation Error:", error);
-    return fallbackText || "Unable to generate response at this time.";
+    console.error(
+      "Gemini API Text Generation Error:",
+      error
+    );
+
+    return (
+      fallbackText ||
+      "Unable to generate AI response."
+    );
   }
 }
 
