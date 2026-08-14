@@ -1,159 +1,379 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { getAuth } from "firebase/auth";
 import { uploadProfileImage } from "../services/supabase/storage";
-import { getUserProfile, saveUserProfile } from "../services/supabase/profiles";
+import {
+  getUserProfile,
+  updateUserProfile
+} from "../services/supabase/profiles";
 import "../assets/styles/Profile.css";
 
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-
 function Profile() {
-  const { user } = useAuth();
-
-  const [profile, setProfile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const [imageUrl, setImageUrl] = useState("");
+
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    bio: ""
+  });
+
+  const [editProfile, setEditProfile] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
+    const loadProfile = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-    async function loadProfile() {
-      if (!user?.uid) return;
-      const data = await getUserProfile(user.uid);
-      if (cancelled) return;
-      setProfile(data);
-      setName(data?.name || user.displayName || "");
-    }
+      if (!user) return;
+
+      try {
+        const data = await getUserProfile(user.uid);
+
+        setProfile({
+          name: data?.name || user.displayName || "",
+          email: data?.email || user.email || "",
+          phone: data?.phone || "",
+          role: data?.role || "Software Engineer",
+          bio: data?.bio || ""
+        });
+
+        if (data?.photo) {
+          setImageUrl(data.photo);
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      }
+    };
 
     loadProfile();
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
+  }, []);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please log in first.");
+      return;
+    }
+
+    if (!profile.name.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      await updateUserProfile(user.uid, {
+        name: profile.name.trim(),
+        phone: profile.phone.trim(),
+        role: profile.role.trim(),
+        bio: profile.bio.trim()
+      });
+
+      setEditProfile(false);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Profile update error:", error);
+      alert(error.message || "Failed to update profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleImageUpload = async (event) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files[0];
+
     if (!file) return;
 
-    setError("");
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
 
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setError("Only JPG, PNG and WEBP images are allowed.");
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only JPG, PNG and WEBP images are allowed.");
+      event.target.value = "";
       return;
     }
 
-    if (file.size > MAX_IMAGE_BYTES) {
-      setError("Maximum file size is 5 MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Maximum file size is 5 MB.");
+      event.target.value = "";
       return;
     }
 
-    if (!user?.uid) {
-      setError("Please log in first.");
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please log in first.");
+      event.target.value = "";
       return;
     }
 
     try {
       setUploading(true);
-      setStatus("Uploading picture...");
 
-      const photoUrl = await uploadProfileImage(file, user.uid);
+      const url = await uploadProfileImage(
+        file,
+        user.uid
+      );
 
-      // Save the URL on the profile row, otherwise the picture is lost on reload.
-      const updated = await saveUserProfile(user.uid, { photoUrl });
+      await updateUserProfile(user.uid, {
+        photo: url
+      });
 
-      setProfile(updated);
-      setStatus("Profile picture updated.");
-    } catch (uploadError) {
-      console.error(uploadError);
-      setError(uploadError.message || "Image upload failed.");
+      setImageUrl(url);
+
+      alert("Profile image uploaded successfully!");
+    } catch (error) {
+      console.error(
+        "Profile image upload error:",
+        error
+      );
+
+      alert(
+        error.message ||
+        "Image upload failed."
+      );
     } finally {
       setUploading(false);
-      // Let the input fire again if the same file is picked twice.
       event.target.value = "";
-      setTimeout(() => setStatus(""), 4000);
     }
   };
 
-  const handleSaveName = async (event) => {
-    event.preventDefault();
-    if (!user?.uid) return;
+  const handleCancelEdit = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-    setError("");
-    try {
-      setStatus("Saving...");
-      const updated = await saveUserProfile(user.uid, {
-        name: name.trim(),
-        email: user.email || "",
-      });
-      setProfile(updated);
-      setStatus("Profile saved.");
-    } catch (saveError) {
-      console.error(saveError);
-      setError("Could not save your profile.");
-    } finally {
-      setTimeout(() => setStatus(""), 4000);
-    }
+    if (!user) return;
+
+    const data = await getUserProfile(user.uid);
+
+    setProfile({
+      name: data?.name || user.displayName || "",
+      email: data?.email || user.email || "",
+      phone: data?.phone || "",
+      role: data?.role || "Software Engineer",
+      bio: data?.bio || ""
+    });
+
+    setEditProfile(false);
   };
-
-  const photoUrl = profile?.photoUrl || "";
-  const initial = (profile?.name || user?.email || "?").charAt(0).toUpperCase();
 
   return (
     <div className="profile-container">
-      <h2 className="profile-title">My Profile</h2>
 
-      <div className="profile-avatar-wrap">
-        {photoUrl ? (
-          <img src={photoUrl} alt="Profile" className="profile-image" />
-        ) : (
-          <div className="profile-image profile-image-placeholder" aria-hidden="true">
-            {initial}
-          </div>
+      <div className="profile-header">
+        <div>
+          <h2 className="profile-title">
+            My Profile
+          </h2>
+
+          <p>
+            Manage your personal information
+            and profile picture.
+          </p>
+        </div>
+
+        {!editProfile && (
+          <button
+            type="button"
+            className="edit-profile-btn"
+            onClick={() => {
+  console.log("EDIT PROFILE CLICKED");
+  setEditProfile(true);
+}}
+          >
+            ✏️ Edit Profile
+          </button>
         )}
       </div>
 
-      <label className="upload-btn">
-        {uploading ? "Uploading..." : photoUrl ? "Change Picture" : "Upload Picture"}
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleImageUpload}
-          disabled={uploading}
-          hidden
-        />
-      </label>
+      <div className="profile-card">
 
-      <form className="profile-form" onSubmit={handleSaveName}>
-        <label htmlFor="profile-name">Display name</label>
-        <input
-          id="profile-name"
-          type="text"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Your name"
-        />
+        <div className="profile-image-section">
 
-        <label htmlFor="profile-email">Email</label>
-        <input
-          id="profile-email"
-          type="email"
-          value={user?.email || ""}
-          disabled
-          readOnly
-        />
-        <small className="profile-hint">
-          Your email comes from your login and cannot be changed here.
-        </small>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="Profile"
+              className="profile-image"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover"
+              }}
+            />
+          ) : (
+            <div
+              className="profile-image"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                background: "#e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "40px"
+              }}
+            >
+              👤
+            </div>
+          )}
 
-        <button type="submit" className="profile-save-btn">
-          Save Profile
-        </button>
-      </form>
+          <label className="upload-btn">
+            {uploading
+              ? "Uploading..."
+              : imageUrl
+              ? "Change Profile Image"
+              : "Upload Profile Image"}
 
-      {status && <p className="profile-status">{status}</p>}
-      {error && <p className="profile-error">{error}</p>}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleImageUpload}
+              hidden
+              disabled={uploading}
+            />
+          </label>
+
+          <small>
+            JPG, PNG or WEBP · Maximum 5 MB
+          </small>
+
+        </div>
+
+        <div className="profile-details">
+
+          <div className="profile-field">
+            <label>Name</label>
+
+            {editProfile ? (
+              <input
+                type="text"
+                name="name"
+                value={profile.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+              />
+            ) : (
+              <div className="profile-value">
+                {profile.name || "Not provided"}
+              </div>
+            )}
+          </div>
+
+          <div className="profile-field">
+            <label>Email</label>
+
+            <div className="profile-value">
+              {profile.email || "Not provided"}
+            </div>
+          </div>
+
+          <div className="profile-field">
+            <label>Phone</label>
+
+            {editProfile ? (
+              <input
+                type="tel"
+                name="phone"
+                value={profile.phone}
+                onChange={handleChange}
+                placeholder="Enter your phone number"
+              />
+            ) : (
+              <div className="profile-value">
+                {profile.phone || "Not provided"}
+              </div>
+            )}
+          </div>
+
+          <div className="profile-field">
+            <label>Role</label>
+
+            {editProfile ? (
+              <input
+                type="text"
+                name="role"
+                value={profile.role}
+                onChange={handleChange}
+                placeholder="Enter your role"
+              />
+            ) : (
+              <div className="profile-value">
+                {profile.role || "Not provided"}
+              </div>
+            )}
+          </div>
+
+          <div className="profile-field">
+            <label>Bio</label>
+
+            {editProfile ? (
+              <textarea
+                name="bio"
+                value={profile.bio}
+                onChange={handleChange}
+                placeholder="Tell us about yourself"
+                rows="4"
+              />
+            ) : (
+              <div className="profile-value">
+                {profile.bio || "No bio added yet."}
+              </div>
+            )}
+          </div>
+
+          {editProfile && (
+            <div className="profile-actions">
+
+              <button
+                type="button"
+                className="cancel-profile-btn"
+                onClick={handleCancelEdit}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="save-profile-btn"
+                onClick={handleSaveProfile}
+                disabled={saving}
+              >
+                {saving
+                  ? "Saving..."
+                  : "Save Changes"}
+              </button>
+
+            </div>
+          )}
+
+        </div>
+
+      </div>
     </div>
   );
 }

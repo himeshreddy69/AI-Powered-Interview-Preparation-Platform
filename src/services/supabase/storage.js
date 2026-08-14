@@ -28,7 +28,10 @@ function requireSupabase() {
 
 /**
  * Upload the original resume file.
- * Returns the storage path, which is saved on the user's resume row.
+ *
+ * Returns `{ path }`. There is deliberately no public URL: the `resumes`
+ * bucket is private, so a public link would not load. Call getResumeUrl(path)
+ * when you actually need to open the file.
  */
 export async function uploadResume(file, uid) {
   if (!file) throw new Error("No file selected.");
@@ -42,7 +45,7 @@ export async function uploadResume(file, uid) {
     .upload(path, file, { upsert: true, contentType: file.type || undefined });
 
   if (error) throw error;
-  return data.path;
+  return { path: data.path };
 }
 
 /**

@@ -47,17 +47,14 @@ function Dashboard() {
     setActiveSection("results");
   };
 
+  // A row click passes that session. "View All" passes null, which must clear
+  // the pinned session — otherwise Results keeps showing the last one opened.
   const handleViewSessionDetails = (sessionData) => {
     if (sessionData && sessionData.overallScore !== undefined) {
       setLastSessionResult(sessionData);
+    } else {
+      setLastSessionResult(null);
     }
-    setActiveSection("results");
-  };
-
-  // "View All" shows the full history, so clear any single pinned session
-  // first — otherwise Results would keep showing the previously opened one.
-  const handleViewAllResults = () => {
-    setLastSessionResult(null);
     setActiveSection("results");
   };
 
@@ -92,10 +89,7 @@ function Dashboard() {
 
             <InterviewCategories onSelectCategory={handleSelectCategory} />
 
-            <RecentInterviews
-              onViewDetails={handleViewSessionDetails}
-              onViewAll={handleViewAllResults}
-            />
+            <RecentInterviews onViewDetails={handleViewSessionDetails} />
 
             <PerformanceChart />
           </div>

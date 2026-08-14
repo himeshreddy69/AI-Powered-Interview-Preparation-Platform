@@ -6,15 +6,26 @@ import { localKeys, readLocal, writeLocal } from "../../utils/localStore";
  * `user_id` is the Firebase UID — see supabase/schema.sql.
  */
 
-/** Database row (snake_case) -> app object (camelCase). */
+/**
+ * Database row (snake_case) -> app object (camelCase).
+ *
+ * `photo` and `photoUrl` are both returned because the Profile page and the
+ * Topbar were written against `photo`, while newer code uses `photoUrl`.
+ * Here `role` is the user's job role ("Software Engineer"), not a permission.
+ */
 function fromRow(row) {
   if (!row) return null;
+  const photo = row.photo_url || "";
+
   return {
     uid: row.user_id,
     name: row.name || "",
     email: row.email || "",
-    photoUrl: row.photo_url || "",
-    role: row.role || "user",
+    photo,
+    photoUrl: photo,
+    phone: row.phone || "",
+    role: row.role || "",
+    bio: row.bio || "",
     defaultTargetRole: row.default_target_role || "Software Engineer",
     defaultQuestionCount: row.default_question_count ?? 5,
     createdAt: row.created_at,
@@ -28,8 +39,14 @@ function toRow(uid, profile) {
 
   if (profile.name !== undefined) row.name = profile.name;
   if (profile.email !== undefined) row.email = profile.email;
-  if (profile.photoUrl !== undefined) row.photo_url = profile.photoUrl;
+  if (profile.phone !== undefined) row.phone = profile.phone;
   if (profile.role !== undefined) row.role = profile.role;
+  if (profile.bio !== undefined) row.bio = profile.bio;
+
+  // Accept either spelling for the picture.
+  if (profile.photoUrl !== undefined) row.photo_url = profile.photoUrl;
+  else if (profile.photo !== undefined) row.photo_url = profile.photo;
+
   if (profile.defaultTargetRole !== undefined) {
     row.default_target_role = profile.defaultTargetRole;
   }
@@ -79,8 +96,11 @@ export async function saveUserProfile(uid, profile = {}) {
  * Kept as a separate name because Register.jsx reads better this way.
  */
 export async function createUserProfile({ uid, name, email }) {
-  return saveUserProfile(uid, { name, email, role: "user" });
+  return saveUserProfile(uid, { name, email });
 }
+
+/** Alias kept so existing Profile/Topbar code keeps working unchanged. */
+export const updateUserProfile = saveUserProfile;
 
 /** Read a user's profile. Falls back to the local copy on any failure. */
 export async function getUserProfile(uid) {

@@ -8,9 +8,13 @@ import { localKeys, readLocal, writeLocal } from "../../utils/localStore";
 
 function fromRow(row) {
   if (!row) return null;
+  const filePath = row.file_path || "";
+
   return {
     fileName: row.file_name || "",
-    filePath: row.file_path || "",
+    filePath,
+    // ResumeCard was written against `storagePath`; keep both names working.
+    storagePath: filePath,
     jobTitle: row.job_title || "",
     experienceLevel: row.experience_level || "",
     skills: Array.isArray(row.skills) ? row.skills : [],
@@ -24,7 +28,8 @@ function toRow(uid, resume) {
   return {
     user_id: uid,
     file_name: resume.fileName || "",
-    file_path: resume.filePath || "",
+    // ResumeCard saves this as `storagePath`; accept either name.
+    file_path: resume.filePath || resume.storagePath || "",
     job_title: resume.jobTitle || "",
     experience_level: resume.experienceLevel || "",
     skills: Array.isArray(resume.skills) ? resume.skills : [],

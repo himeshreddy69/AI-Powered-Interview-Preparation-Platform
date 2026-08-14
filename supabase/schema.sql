@@ -31,17 +31,25 @@ $$;
 -- -------------------------------------------------------------------
 -- profiles — one row per user
 -- -------------------------------------------------------------------
+-- `role` here is the user's job role, e.g. "Software Engineer" — it is a
+-- profile field the user edits, not a permission level.
 create table if not exists public.profiles (
   user_id                 text primary key,
   name                    text        not null default '',
   email                   text        not null default '',
   photo_url               text,
-  role                    text        not null default 'user',
+  phone                   text        not null default '',
+  role                    text        not null default '',
+  bio                     text        not null default '',
   default_target_role     text        not null default 'Software Engineer',
   default_question_count  integer     not null default 5,
   created_at              timestamptz not null default now(),
   updated_at              timestamptz not null default now()
 );
+
+-- Added after the first version of this file; safe to run on an existing table.
+alter table public.profiles add column if not exists phone text not null default '';
+alter table public.profiles add column if not exists bio   text not null default '';
 
 
 -- -------------------------------------------------------------------
