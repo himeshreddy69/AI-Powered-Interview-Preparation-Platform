@@ -234,3 +234,15 @@
     font-size: 15px;
   }
 }
+/* Shown when the user has not completed any interviews yet. */
+.recent-empty {
+  margin: 14px 0 4px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #64748b;
+  text-align: center;
+}

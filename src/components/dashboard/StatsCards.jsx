@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getUserInterviewHistory, getUserResume } from "../../services/firebase/firestore";
+import { getUserInterviewHistory } from "../../services/supabase/interviewResults";
+import { getUserResume } from "../../services/supabase/resumes";
 import { calculateAverageScore } from "../../services/ai/scoreAnalysis";
 import "../../assets/styles/StatsCards.css";
 
@@ -20,9 +21,10 @@ function StatsCards() {
   }, [user]);
 
   const totalInterviews = history.length;
-  const avgScore = totalInterviews > 0 ? calculateAverageScore(history) : 85;
-  const skillsCount = resume?.skills?.length || 5;
-  const topSkill = resume?.skills?.[0] || "Problem Solving";
+  const hasInterviews = totalInterviews > 0;
+  const avgScore = hasInterviews ? calculateAverageScore(history) : null;
+  const skillsCount = resume?.skills?.length ?? 0;
+  const topSkill = resume?.skills?.[0] || null;
 
   return (
     <section className="stats-card dashboard-card">
@@ -39,12 +41,12 @@ function StatsCards() {
 
       <div className="stats-grid">
         <div className="stat-item">
-          <h3>{totalInterviews > 0 ? totalInterviews : 1}</h3>
+          <h3>{totalInterviews}</h3>
           <p>Interviews Completed</p>
         </div>
 
         <div className="stat-item">
-          <h3>{avgScore}%</h3>
+          <h3>{hasInterviews ? `${avgScore}%` : "—"}</h3>
           <p>Average Score</p>
         </div>
 
@@ -54,10 +56,18 @@ function StatsCards() {
         </div>
 
         <div className="stat-item">
-          <h3 style={{ fontSize: "18px", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{topSkill}</h3>
+          <h3 style={{ fontSize: "18px", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+            {topSkill || "—"}
+          </h3>
           <p>Top Domain Skill</p>
         </div>
       </div>
+
+      {!hasInterviews && (
+        <p className="stats-empty-note">
+          Finish your first mock interview to start filling these in.
+        </p>
+      )}
     </section>
   );
 }

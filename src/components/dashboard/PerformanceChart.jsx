@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "../../context/AuthContext";
-import { getUserInterviewHistory } from "../../services/firebase/firestore";
+import { getUserInterviewHistory } from "../../services/supabase/interviewResults";
 import { calculateAverageScore, formatPerformanceChartData, getPerformanceBadge } from "../../services/ai/scoreAnalysis";
 import "../../assets/styles/PerformanceChart.css";
 
@@ -19,7 +19,8 @@ function PerformanceChart() {
     loadData();
   }, [user]);
 
-  const avgScore = calculateAverageScore(history) || 82;
+  const hasHistory = history.length > 0;
+  const avgScore = calculateAverageScore(history);
   const badgeInfo = getPerformanceBadge(avgScore);
   const chartData = formatPerformanceChartData(history);
 
@@ -39,14 +40,20 @@ function PerformanceChart() {
 
       <div className="performance-summary">
         <div className="performance-score">
-          <strong style={{ color: badgeInfo.color }}>{avgScore}%</strong>
-          <span>Average Score {badgeInfo.badge}</span>
+          <strong style={{ color: hasHistory ? badgeInfo.color : "#94a3b8" }}>
+            {hasHistory ? `${avgScore}%` : "—"}
+          </strong>
+          <span>Average Score {hasHistory ? badgeInfo.badge : ""}</span>
         </div>
 
         <div className="performance-improvement">
-          <span style={{ color: badgeInfo.color }}>{badgeInfo.badge}</span>
+          <span style={{ color: hasHistory ? badgeInfo.color : "#94a3b8" }}>
+            {hasHistory ? badgeInfo.badge : "—"}
+          </span>
           <div>
-            <strong style={{ color: badgeInfo.color }}>{badgeInfo.label}</strong>
+            <strong style={{ color: hasHistory ? badgeInfo.color : "#94a3b8" }}>
+              {hasHistory ? badgeInfo.label : "No data yet"}
+            </strong>
             <p>Mastery Level</p>
           </div>
         </div>
@@ -73,12 +80,20 @@ function PerformanceChart() {
         </div>
       ) : (
         <div className="performance-bars">
-          <p style={{ fontSize: "13px", color: "#94a3b8", textAlign: "center" }}>Complete your first interview to see visual performance trends.</p>
+          <p style={{ fontSize: "13px", color: "#94a3b8", textAlign: "center" }}>
+            {loading
+              ? "Loading your sessions..."
+              : "Complete your first interview to see visual performance trends."}
+          </p>
         </div>
       )}
 
       <div className="performance-footer">
-        <span>Based on {history.length} completed practice session(s)</span>
+        <span>
+          {loading
+            ? "Loading..."
+            : `Based on ${history.length} completed practice session${history.length === 1 ? "" : "s"}`}
+        </span>
       </div>
     </section>
   );

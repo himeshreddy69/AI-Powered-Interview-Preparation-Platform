@@ -10,7 +10,7 @@ import {
 
 import {
   createUserProfile
-} from "../services/firebase/firestore";
+} from "../services/supabase/profiles";
 
 import "../assets/styles/Register.css";
 

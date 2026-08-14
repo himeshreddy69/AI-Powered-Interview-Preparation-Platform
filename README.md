@@ -10,17 +10,21 @@ The main objective of this project is to make interview preparation more persona
 
 ## Features
 
-- User Authentication
-- Resume Upload
-- AI Resume Analysis
+- User Authentication (email/password and Google sign-in)
+- Resume Upload (PDF or TXT)
+- AI Resume Analysis and skill extraction
 - AI-Generated Interview Questions
-- Technical, HR and Behavioral Interview Modes
-- Mock Interview with Timer
-- Voice Recording
+- Technical, HR, Coding and Behavioral Interview Modes
+- Company-specific practice tracks
+- Mock Interview with a countdown timer that auto-submits when time runs out
+- Voice Recording (browser Web Speech API)
 - AI Feedback and Score Analysis
-- Progress Dashboard
+- Progress Dashboard with performance charts
 - Interview History
-- Admin Panel
+- Dark Mode
+
+> **Not implemented yet:** an Admin Panel. Earlier versions of this README
+> listed one, but no admin functionality exists in the codebase.
 
 ---
 
@@ -33,19 +37,28 @@ The main objective of this project is to make interview preparation more persona
 - Context API
 - CSS
 
-### Backend
+### Authentication
 - Firebase Authentication
-- Cloud Firestore
-- Firebase Storage
-- Firebase Hosting
+
+### Database & Storage
+- Supabase (Postgres + Storage)
 
 ### AI
-- Google Gemini API
+- Google Gemini API (`gemini-2.5-flash`)
 
 ### Other Tools
 - Recharts
-- Git
-- GitHub
+- pdf.js (resume text extraction)
+- Git & GitHub
+
+### Why two backends?
+
+Firebase handles **login only**. Everything the user creates — profiles,
+resumes, interview results, uploaded files — lives in **Supabase**.
+
+To keep that safe, the app passes the user's Firebase ID token to Supabase on
+every request, so Supabase's row level security can verify who is asking. See
+[SUPABASE_SETUP.md](SUPABASE_SETUP.md).
 
 ---
 
@@ -55,21 +68,27 @@ The main objective of this project is to make interview preparation more persona
 AI-Powered-Interview-Preparation-Platform
 │
 ├── public
+├── supabase
+│   └── schema.sql          # tables, security rules, storage buckets
 ├── src
-│   ├── assets
+│   ├── assets/styles
 │   ├── components
-│   ├── context
-│   ├── hooks
+│   │   ├── common          # landing page + shared UI
+│   │   └── dashboard       # logged-in dashboard panels
+│   ├── context             # AuthContext, ThemeContext
+│   ├── layouts
 │   ├── pages
 │   ├── routes
 │   ├── services
+│   │   ├── ai              # Gemini client, prompts, scoring
+│   │   ├── firebase        # auth only
+│   │   └── supabase        # database + file storage
 │   ├── utils
-│   ├── data
 │   ├── App.jsx
 │   └── main.jsx
 │
 ├── package.json
-├── firebase.json
+├── SUPABASE_SETUP.md
 └── README.md
 ```
 
@@ -82,7 +101,7 @@ AI-Powered-Interview-Preparation-Platform
 3. AI analyzes your resume and extracts important skills.
 4. Generate interview questions based on your resume and selected role.
 5. Start a mock interview.
-6. Submit your answers.
+6. Submit your answers (by typing or by voice).
 7. Receive AI-generated feedback and scores.
 8. Track your progress on the dashboard.
 
@@ -116,20 +135,38 @@ npm run dev
 
 ---
 
-## Environment Variables
+## Setup
 
-Create a `.env` file and add your Firebase and Gemini API keys.
+### 1. Environment variables
 
-```env
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
+Copy `.env.example` to `.env` and fill in your own values:
 
-VITE_GEMINI_API_KEY=
+```bash
+cp .env.example .env
 ```
+
+| Variable | What it is for | Where to get it |
+| --- | --- | --- |
+| `VITE_FIREBASE_*` | Login | Firebase Console → Project settings → Your apps |
+| `VITE_SUPABASE_URL` | Database + storage | Supabase → Project Settings → API |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Database + storage | Supabase → Project Settings → API |
+| `VITE_GEMINI_API_KEY` | AI questions and scoring | [Google AI Studio](https://aistudio.google.com/apikey) |
+
+Vite only reads `.env` at startup, so **restart the dev server** after changing it.
+
+### 2. Supabase
+
+Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor,
+then follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to connect Firebase logins to
+Supabase. Without that last step the app falls back to storing data in the
+browser only.
+
+### 3. Gemini
+
+If `VITE_GEMINI_API_KEY` is missing, the app still runs, but questions and
+feedback come from a built-in sample set instead of real AI. A yellow warning
+banner appears in the app whenever this is the case, so it is never mistaken for
+genuine AI output.
 
 ---
 
@@ -137,11 +174,10 @@ VITE_GEMINI_API_KEY=
 
 - Video Interview Support
 - ATS Resume Checker
-- Company-specific Interview Sets
-- Coding Interview Module
+- Coding Interview Module with a code editor
 - Multi-language Support
-- Dark Mode
 - AI Career Guidance
+- Admin Panel
 
 ---
 

@@ -1,0 +1,55 @@
+/* =========================================
+   AI STATUS BANNER
+   Shown only when VITE_GEMINI_API_KEY is missing.
+========================================= */
+
+.ai-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 4px solid #f59e0b;
+  border-radius: 10px;
+}
+
+.ai-status-icon {
+  flex-shrink: 0;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.ai-status-banner strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.ai-status-banner p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #a16207;
+}
+
+.ai-status-banner code {
+  padding: 1px 5px;
+  background: #fef3c7;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: #78350f;
+}
+
+.ai-status-banner a {
+  color: #b45309;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.ai-status-banner a:hover {
+  color: #92400e;
+}

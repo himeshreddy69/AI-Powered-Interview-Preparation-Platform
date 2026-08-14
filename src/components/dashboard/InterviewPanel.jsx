@@ -2,31 +2,36 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { generateInterviewQuestions } from "../../services/ai/interviewGenerator";
 import { evaluateInterviewSession } from "../../services/ai/feedbackGenerator";
-import { getUserResume, saveInterviewResult } from "../../services/firebase/firestore";
+import { getUserResume } from "../../services/supabase/resumes";
+import { saveInterviewResult } from "../../services/supabase/interviewResults";
+import { getUserProfile } from "../../services/supabase/profiles";
+import AiStatusBanner from "../common/AiStatusBanner";
 import "../../assets/styles/InterviewPanel.css";
 
-function InterviewPanel({ onCompleteSession }) {
+function InterviewPanel({ onCompleteSession, preset }) {
   const { user } = useAuth();
 
-  // Setup state
   const [selectedType, setSelectedType] = useState("Technical Interview");
   const [targetRole, setTargetRole] = useState("Software Engineer");
   const [questionCount, setQuestionCount] = useState(5);
   const [resumeData, setResumeData] = useState(null);
 
-  // Flow control states
-  const [stage, setStage] = useState("setup"); // "setup" | "generating" | "interview" | "evaluating"
+  const [stage, setStage] = useState("setup");
   const [questions, setQuestions] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
 
-  // Voice recording state
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef(null);
 
-  // Timer state
-  const [timeLeft, setTimeLeft] = useState(900); // 15 mins total
+  const [timeLeft, setTimeLeft] = useState(900);
   const [showHint, setShowHint] = useState(false);
+
+  // Which question the microphone should write into. Kept in a ref so the
+  // speech recogniser can be built once instead of rebuilt on every question.
+  const activeQuestionIdRef = useRef(1);
+  // Lets the countdown effect submit without depending on function order.
+  const submitRef = useRef(null);
 
   const interviewTypes = [
     {
@@ -51,65 +56,113 @@ function InterviewPanel({ onCompleteSession }) {
     },
   ];
 
-  // Load user resume profile on mount
+  // Load the user's saved defaults and resume, and use them to pre-fill setup.
   useEffect(() => {
-    async function loadResume() {
-      const data = await getUserResume(user?.uid);
-      if (data) {
-        setResumeData(data);
-        if (data.jobTitle) {
-          setTargetRole(data.jobTitle);
-        }
+    let cancelled = false;
+
+    async function loadDefaults() {
+      const [resume, profile] = await Promise.all([
+        getUserResume(user?.uid),
+        getUserProfile(user?.uid),
+      ]);
+      if (cancelled) return;
+
+      if (profile?.defaultTargetRole) setTargetRole(profile.defaultTargetRole);
+      if (profile?.defaultQuestionCount) setQuestionCount(profile.defaultQuestionCount);
+
+      if (resume) {
+        setResumeData(resume);
+        // The resume's job title is more specific than a saved default.
+        if (resume.jobTitle) setTargetRole(resume.jobTitle);
       }
     }
-    loadResume();
+
+    loadDefaults();
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
-  // Timer countdown hook during live interview
+  // A category tile or company card was clicked on the dashboard — carry that
+  // choice into the setup form. Runs after the defaults above so it wins.
   useEffect(() => {
-    let timer = null;
-    if (stage === "interview" && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
+    if (!preset) return;
+    if (preset.category) setSelectedType(preset.category);
+    if (preset.role) setTargetRole(preset.role);
+  }, [preset]);
+
+  // Countdown. Ticks once per second while the interview is live.
+  useEffect(() => {
+    if (stage !== "interview" || timeLeft <= 0) return undefined;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, [stage, timeLeft]);
 
-  // Setup Web Speech API for voice recording
+  // Time is up — submit what the user has so far rather than stalling forever.
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const rec = new SpeechRecognition();
-      rec.continuous = true;
-      rec.interimResults = true;
+    if (stage === "interview" && timeLeft === 0) {
+      submitRef.current?.();
+    }
+  }, [stage, timeLeft]);
 
-      rec.onresult = (event) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+  // Keep the microphone target pointed at the question on screen.
+  useEffect(() => {
+    activeQuestionIdRef.current = questions[currentIdx]?.id || currentIdx + 1;
+  }, [questions, currentIdx]);
+
+  // Build the speech recogniser once, and tear it down on unmount.
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return undefined;
+
+    const rec = new SpeechRecognition();
+    rec.continuous = true;
+    rec.interimResults = false; // Only final text, otherwise it appends duplicates.
+
+    rec.onresult = (event) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
           transcript += event.results[i][0].transcript;
         }
-        const currentQId = questions[currentIdx]?.id || currentIdx + 1;
-        setUserAnswers((prev) => ({
-          ...prev,
-          [currentQId]: (prev[currentQId] ? prev[currentQId] + " " : "") + transcript
-        }));
-      };
+      }
+      if (!transcript.trim()) return;
 
-      rec.onerror = (err) => {
-        console.warn("Speech recognition error:", err);
-        setIsRecording(false);
-      };
+      const questionId = activeQuestionIdRef.current;
+      setUserAnswers((prev) => ({
+        ...prev,
+        [questionId]: (prev[questionId] ? prev[questionId] + " " : "") + transcript.trim(),
+      }));
+    };
 
-      rec.onend = () => {
-        setIsRecording(false);
-      };
+    rec.onerror = (err) => {
+      console.warn("Speech recognition error:", err);
+      setIsRecording(false);
+    };
 
-      recognitionRef.current = rec;
-    }
-  }, [questions, currentIdx]);
+    rec.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = rec;
+
+    return () => {
+      rec.onresult = null;
+      rec.onerror = null;
+      rec.onend = null;
+      try {
+        rec.stop();
+      } catch {
+        // Already stopped — nothing to do.
+      }
+      recognitionRef.current = null;
+    };
+  }, []);
 
   const toggleVoiceRecording = () => {
     if (!recognitionRef.current) {
@@ -142,7 +195,7 @@ function InterviewPanel({ onCompleteSession }) {
       setQuestions(generated);
       setCurrentIdx(0);
       setUserAnswers({});
-      setTimeLeft(questionCount * 180); // 3 mins per question
+      setTimeLeft(questionCount * 180);
       setStage("interview");
     } catch (err) {
       console.error(err);
@@ -161,28 +214,21 @@ function InterviewPanel({ onCompleteSession }) {
 
   const handleNext = () => {
     setShowHint(false);
-    if (isRecording && recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    if (currentIdx < questions.length - 1) {
-      setCurrentIdx((prev) => prev + 1);
-    }
+    if (isRecording && recognitionRef.current) recognitionRef.current.stop();
+    if (currentIdx < questions.length - 1) setCurrentIdx((prev) => prev + 1);
   };
 
   const handlePrev = () => {
     setShowHint(false);
-    if (isRecording && recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    if (currentIdx > 0) {
-      setCurrentIdx((prev) => prev - 1);
-    }
+    if (isRecording && recognitionRef.current) recognitionRef.current.stop();
+    if (currentIdx > 0) setCurrentIdx((prev) => prev - 1);
   };
 
   const handleSubmitInterview = async () => {
-    if (isRecording && recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
+    // The countdown and the Submit button can both fire this. Only run once.
+    if (stage !== "interview") return;
+
+    if (isRecording && recognitionRef.current) recognitionRef.current.stop();
     setStage("evaluating");
 
     const qnaList = questions.map((q) => ({
@@ -207,7 +253,7 @@ function InterviewPanel({ onCompleteSession }) {
         qnaList
       };
 
-      // Save result locally & to Firestore
+      // Saves to Supabase, and always keeps a local copy as a safety net.
       await saveInterviewResult(user?.uid, fullResultData);
 
       if (onCompleteSession) {
@@ -218,10 +264,13 @@ function InterviewPanel({ onCompleteSession }) {
       }
     } catch (err) {
       console.error("Evaluation error:", err);
-      alert("Evaluation finished with default scoring.");
+      alert("We could not evaluate this interview. Please try again.");
       setStage("setup");
     }
   };
+
+  // The countdown effect calls the latest version of the submit handler.
+  submitRef.current = handleSubmitInterview;
 
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -405,6 +454,8 @@ function InterviewPanel({ onCompleteSession }) {
           Select an interview category, specify your target role, and practice with AI-generated questions.
         </p>
       </div>
+
+      <AiStatusBanner />
 
       {resumeData && (
         <div style={{ marginBottom: "20px", padding: "12px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>

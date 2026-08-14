@@ -55,6 +55,18 @@
    PROFILE IMAGE
 ========================================= */
 
+/* Shown before the user uploads a picture: their first initial in a circle. */
+.profile-image-placeholder {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 40px;
+  font-weight: 700;
+  user-select: none;
+}
+
 .profile-image {
   width: 105px;
   height: 105px;

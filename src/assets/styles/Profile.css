@@ -36,3 +36,88 @@
 .upload-btn:hover {
   background-color: #1d4ed8;
 }
+
+/* Shown before the user uploads a picture: their first initial in a circle. */
+.profile-image-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 48px;
+  font-weight: 700;
+  user-select: none;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 28px;
+  text-align: left;
+}
+
+.profile-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.profile-form input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+.profile-form input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: -1px;
+  border-color: #2563eb;
+}
+
+.profile-form input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.profile-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.profile-save-btn {
+  margin-top: 10px;
+  padding: 11px 20px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.profile-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.profile-status {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #059669;
+}
+
+.profile-error {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dc2626;
+}

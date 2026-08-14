@@ -6,10 +6,8 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
-import "./assets/styles/global.css";
-import "./assets/styles/variables.css";
-import "./assets/styles/themes.css";
-import "./index.css";
+import "./index.css";          // page reset
+import "./assets/styles/themes.css";  // design tokens + dark mode
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

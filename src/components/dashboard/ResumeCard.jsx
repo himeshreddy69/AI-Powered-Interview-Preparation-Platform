@@ -3,7 +3,9 @@ import { useAuth } from "../../context/AuthContext";
 import { parseResumeFile } from "../../utils/resumeParser";
 import { generateJSONResponse } from "../../services/ai/gemini";
 import { RESUME_EXTRACTION_PROMPT } from "../../services/ai/promptTemplates";
-import { getUserResume, saveUserResume } from "../../services/firebase/firestore";
+import { getUserResume, saveUserResume } from "../../services/supabase/resumes";
+import { uploadResume } from "../../services/supabase/storage";
+import AiStatusBanner from "../common/AiStatusBanner";
 import "../../assets/styles/ResumeCard.css";
 
 function ResumeCard() {
@@ -43,10 +45,21 @@ function ResumeCard() {
 
       const rawText = await parseResumeFile(file);
 
+      // Keep the original file too, not just the extracted text, so the user
+      // can download it back later. A failure here must not lose the parse.
+      setStatusMsg("Saving your file...");
+      let filePath = "";
+      try {
+        filePath = await uploadResume(file, user?.uid);
+      } catch (uploadError) {
+        console.warn("Could not store the resume file:", uploadError);
+      }
+
       setStatusMsg("AI is analyzing your resume & skills...");
 
       const fallbackInfo = {
         fileName: file.name,
+        filePath,
         name: user?.displayName || "Candidate",
         jobTitle: "Software Developer",
         experienceLevel: "Mid Level",
@@ -61,16 +74,17 @@ function ResumeCard() {
         const prompt = RESUME_EXTRACTION_PROMPT(rawText.substring(0, 4000));
         const aiExtracted = await generateJSONResponse(prompt, fallbackInfo);
         parsedProfile = {
-          fileName: file.name,
-          rawText: rawText.substring(0, 3000),
           ...aiExtracted,
+          fileName: file.name,
+          filePath,
+          rawText: rawText.substring(0, 3000),
         };
       } catch (err) {
         console.warn("AI extraction fallback used:", err);
       }
 
-      await saveUserResume(user?.uid, parsedProfile);
-      setResumeData(parsedProfile);
+      const saved = await saveUserResume(user?.uid, parsedProfile);
+      setResumeData(saved || parsedProfile);
       setStatusMsg("Resume analyzed & saved!");
     } catch (error) {
       console.error(error);
@@ -93,6 +107,8 @@ function ResumeCard() {
           📄
         </div>
       </div>
+
+      <AiStatusBanner />
 
       {resumeData ? (
         <div className="resume-profile-details" style={{ marginTop: "16px" }}>

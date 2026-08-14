@@ -7,6 +7,7 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 
 import Dashboard from "../pages/Dashboard";
+import NotFound from "../pages/NotFound";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -65,15 +66,11 @@ function AppRoutes() {
         }
       />
 
-      {/* Unknown Route */}
+      {/* Unknown Route — show a 404 instead of silently sending them home,
+          so a broken link is visible rather than looking like it worked. */}
       <Route
         path="*"
-        element={
-          <Navigate
-            to="/"
-            replace
-          />
-        }
+        element={<NotFound />}
       />
 
     </Routes>

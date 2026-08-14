@@ -17,6 +17,8 @@ import FeaturesPanel from "../components/dashboard/FeaturesPanel";
 import AboutPanel from "../components/dashboard/AboutPanel";
 import ContactPanel from "../components/dashboard/ContactPanel";
 import Results from "./Results";
+import Profile from "./Profile";
+import Settings from "./Settings";
 
 import "../assets/styles/Dashboard.css";
 
@@ -26,6 +28,10 @@ function Dashboard() {
 
   const [activeSection, setActiveSection] = useState("dashboard");
   const [lastSessionResult, setLastSessionResult] = useState(null);
+
+  // Carries a chosen category or company through to the interview setup form,
+  // so picking "HR Interview" or "Google" actually pre-fills the session.
+  const [interviewPreset, setInterviewPreset] = useState(null);
 
   async function handleLogout() {
     try {
@@ -48,7 +54,20 @@ function Dashboard() {
     setActiveSection("results");
   };
 
+  // "View All" shows the full history, so clear any single pinned session
+  // first — otherwise Results would keep showing the previously opened one.
+  const handleViewAllResults = () => {
+    setLastSessionResult(null);
+    setActiveSection("results");
+  };
+
+  const handleSelectCategory = (categoryName) => {
+    setInterviewPreset({ category: categoryName });
+    setActiveSection("interview");
+  };
+
   const handleStartCompanyTrack = (trackData) => {
+    setInterviewPreset(trackData || null);
     setActiveSection("interview");
   };
 
@@ -67,13 +86,16 @@ function Dashboard() {
           <div className="dashboard-grid">
             <StatsCards />
 
-            <ProfileCard user={user} />
+            <ProfileCard user={user} onEdit={() => setActiveSection("profile")} />
 
             <ResumeCard />
 
-            <InterviewCategories onSelectCategory={(cat) => setActiveSection("interview")} />
+            <InterviewCategories onSelectCategory={handleSelectCategory} />
 
-            <RecentInterviews onViewDetails={handleViewSessionDetails} />
+            <RecentInterviews
+              onViewDetails={handleViewSessionDetails}
+              onViewAll={handleViewAllResults}
+            />
 
             <PerformanceChart />
           </div>
@@ -90,7 +112,10 @@ function Dashboard() {
       {/* INTERVIEW */}
       {activeSection === "interview" && (
         <div className="dashboard-section">
-          <InterviewPanel onCompleteSession={handleCompleteInterview} />
+          <InterviewPanel
+            preset={interviewPreset}
+            onCompleteSession={handleCompleteInterview}
+          />
         </div>
       )}
 
@@ -135,27 +160,14 @@ function Dashboard() {
       {/* PROFILE */}
       {activeSection === "profile" && (
         <div className="dashboard-section">
-          <ProfileCard user={user} />
+          <Profile />
         </div>
       )}
 
       {/* SETTINGS */}
       {activeSection === "settings" && (
-        <div className="dashboard-section" style={{ background: "#fff", padding: "30px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
-          <h1 style={{ margin: "0 0 8px", fontSize: "24px", color: "#0f172a" }}>Account & AI Settings</h1>
-          <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "24px" }}>
-            Configure your environment keys and practice preferences.
-          </p>
-
-          <div style={{ padding: "16px", background: "#f8fafc", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-            <h4 style={{ margin: "0 0 6px", fontSize: "15px", color: "#334155" }}>Google Gemini API Configuration</h4>
-            <p style={{ margin: "0 0 10px", fontSize: "13px", color: "#64748b" }}>
-              To enable live Gemini AI questions and answer scoring, add your API key to your <code>.env</code> file:
-            </p>
-            <pre style={{ background: "#0f172a", color: "#38bdf8", padding: "12px", borderRadius: "8px", fontSize: "12px", overflowX: "auto" }}>
-              VITE_GEMINI_API_KEY=your_gemini_api_key_here
-            </pre>
-          </div>
+        <div className="dashboard-section">
+          <Settings />
         </div>
       )}
     </DashboardLayout>

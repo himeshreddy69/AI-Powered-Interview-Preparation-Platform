@@ -17,17 +17,11 @@ export function getPerformanceBadge(score) {
 }
 
 export function formatPerformanceChartData(interviewHistory = []) {
-  if (!interviewHistory || interviewHistory.length === 0) {
-    return [
-      { name: "Session 1", score: 65, technical: 70, communication: 60, problemSolving: 65 },
-      { name: "Session 2", score: 72, technical: 75, communication: 68, problemSolving: 73 },
-      { name: "Session 3", score: 80, technical: 84, communication: 76, problemSolving: 80 },
-      { name: "Session 4", score: 86, technical: 88, communication: 82, problemSolving: 88 },
-      { name: "Session 5", score: 91, technical: 92, communication: 88, problemSolving: 93 },
-    ];
-  }
+  if (!interviewHistory || interviewHistory.length === 0) return [];
 
-  return interviewHistory.map((session, index) => ({
+  // The chart reads left to right as time moving forward, but history arrives
+  // newest first, so reverse it before plotting.
+  return [...interviewHistory].reverse().map((session, index) => ({
     name: session.createdAt ? new Date(session.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : `Session ${index + 1}`,
     score: session.overallScore || 0,
     technical: session.technicalScore || session.overallScore || 0,

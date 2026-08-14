@@ -52,11 +52,11 @@ function Footer() {
           <h3>Contact</h3>
 
           <p>
-            <FaEnvelope /> supportdebic.ai@gmail.com
+            <FaEnvelope /> reddyhimesh12@gmail.com
           </p>
 
           <p>
-            <FaPhoneAlt /> +91 9392580322
+            <FaPhoneAlt /> +91 93925 80322
           </p>
 
           <p>
