@@ -44,7 +44,8 @@ The main objective of this project is to make interview preparation more persona
 - Supabase (Postgres + Storage)
 
 ### AI
-- Google Gemini API (`gemini-2.5-flash`)
+- Google Gemini API (`gemini-3.5-flash`, with automatic fallback to
+  `gemini-3.7-flash` / `gemini-3-flash-preview` if a model is busy)
 
 ### Other Tools
 - Recharts

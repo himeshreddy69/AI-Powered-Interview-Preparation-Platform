@@ -5,6 +5,25 @@ const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 export const isGeminiConfigured =
   Boolean(apiKey && apiKey.trim() !== "");
 
+/*
+ * Model choice.
+ *
+ * The app used to hardcode "gemini-2.5-flash". That model now returns
+ * 404 "no longer available to new users", so a brand new API key could
+ * never reach it and every AI call silently fell back to sample data.
+ *
+ * These are tried in order. Flash models are fast and cheap, which suits
+ * question generation and answer scoring. The extras give us somewhere to
+ * go when a model is temporarily overloaded (503), which does happen.
+ */
+const MODELS = [
+  "gemini-3.5-flash",
+  "gemini-3.7-flash",
+  "gemini-3-flash-preview",
+];
+
+const REQUEST_TIMEOUT_MS = 20000;
+
 let aiClient = null;
 
 if (isGeminiConfigured) {
@@ -18,6 +37,48 @@ if (isGeminiConfigured) {
       error
     );
   }
+}
+
+/**
+ * Call the API, moving to the next model if one is unavailable or busy.
+ * Anything else (bad key, bad prompt) throws straight away — retrying
+ * those on another model would just waste time.
+ */
+async function callWithFallback(request) {
+  let lastError = null;
+
+  for (const model of MODELS) {
+    try {
+      return await Promise.race([
+        aiClient.models.generateContent({ ...request, model }),
+
+        new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error("Gemini request timed out.")),
+            REQUEST_TIMEOUT_MS
+          );
+        }),
+      ]);
+    } catch (error) {
+      lastError = error;
+
+      const status = error?.status ?? error?.code;
+      const message = String(error?.message || "");
+      const worthRetrying =
+        status === 404 ||
+        status === 429 ||
+        status === 503 ||
+        /not found|no longer available|overloaded|high demand|timed out/i.test(
+          message
+        );
+
+      if (!worthRetrying) throw error;
+
+      console.warn(`Gemini model "${model}" unavailable, trying next.`);
+    }
+  }
+
+  throw lastError || new Error("No Gemini model was available.");
 }
 
 /* =========================================
@@ -43,25 +104,12 @@ export async function generateJSONResponse(
   }
 
   try {
-    const response = await Promise.race([
-      aiClient.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-        },
-      }),
-
-      new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(
-            new Error(
-              "Gemini request timed out."
-            )
-          );
-        }, 10000);
-      }),
-    ]);
+    const response = await callWithFallback({
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
     const text = response?.text;
 
@@ -137,22 +185,9 @@ export async function generateTextResponse(
   }
 
   try {
-    const response = await Promise.race([
-      aiClient.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-      }),
-
-      new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(
-            new Error(
-              "Gemini text request timed out."
-            )
-          );
-        }, 10000);
-      }),
-    ]);
+    const response = await callWithFallback({
+      contents: prompt,
+    });
 
     return (
       response?.text ||
