@@ -1,6 +1,15 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "../../assets/styles/CTASection.css";
 
 function CTASection() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStart = () => {
+    navigate(user ? "/dashboard" : "/register");
+  };
+
   return (
     <section className="cta">
 
@@ -12,8 +21,8 @@ function CTASection() {
         Join thousands of students preparing with AI.
       </p>
 
-      <button>
-        Start For Free
+      <button type="button" onClick={handleStart}>
+        {user ? "Go to Dashboard" : "Start For Free"}
       </button>
 
     </section>

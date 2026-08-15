@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -22,9 +22,20 @@ import Settings from "./Settings";
 
 import "../assets/styles/Dashboard.css";
 
+/* The landing page labels its categories more loosely than the interview
+   setup form does. Map the ones that match; anything else falls back to a
+   technical round. */
+const LANDING_CATEGORY_MAP = {
+  "HR Interview": "HR Interview",
+  "Technical": "Technical Interview",
+  "Coding": "Coding Interview",
+  "Behavioral": "Behavioral Interview",
+};
+
 function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeSection, setActiveSection] = useState("dashboard");
   const [lastSessionResult, setLastSessionResult] = useState(null);
@@ -32,6 +43,20 @@ function Dashboard() {
   // Carries a chosen category or company through to the interview setup form,
   // so picking "HR Interview" or "Google" actually pre-fills the session.
   const [interviewPreset, setInterviewPreset] = useState(null);
+
+  // Arriving from a "Start Practice" card on the landing page.
+  useEffect(() => {
+    const chosen = location.state?.category;
+    if (!chosen) return;
+
+    setInterviewPreset({
+      category: LANDING_CATEGORY_MAP[chosen] || "Technical Interview",
+    });
+    setActiveSection("interview");
+
+    // Clear the router state so a refresh does not reopen the interview.
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.state, location.pathname, navigate]);
 
   async function handleLogout() {
     try {

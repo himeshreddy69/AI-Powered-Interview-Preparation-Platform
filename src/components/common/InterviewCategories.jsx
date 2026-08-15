@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "../../assets/styles/InterviewCategories.css";
 
 function InterviewCategories() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Carry the chosen category through to the dashboard so the interview
+  // setup form opens already filled in. Logged-out visitors sign up first.
+  const handleStartPractice = (categoryName) => {
+    if (!user) {
+      navigate("/register");
+      return;
+    }
+    navigate("/dashboard", { state: { category: categoryName } });
+  };
+
   const categories = [
     {
       name: "HR Interview",
@@ -77,6 +92,7 @@ function InterviewCategories() {
             <button
               type="button"
               className="category-btn"
+              onClick={() => handleStartPractice(category.name)}
             >
               Start Practice
               <span>→</span>

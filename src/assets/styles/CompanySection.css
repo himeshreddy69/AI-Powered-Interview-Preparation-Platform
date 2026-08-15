@@ -16,8 +16,14 @@
 }
 
 .company-card{
+    /* This is a <button> now, so the browser defaults need clearing. */
+    display:block;
+    width:100%;
+    border:1px solid #e8eef7;
+    font-family:inherit;
+    color:#1e293b;
     background:white;
-    padding:25px;
+    padding: var(--sp-5);
     text-align:center;
     border-radius: var(--r-lg);
     font-size: var(--fs-lg);
@@ -28,7 +34,22 @@
 }
 
 .company-card:hover{
-    transform:translateY(-8px);
+    transform:translateY(-4px);
     background:#2563eb;
+    border-color:#2563eb;
     color:white;
+    box-shadow: var(--shadow-lg);
+}
+
+.company-card:focus-visible{
+    outline:2px solid #2563eb;
+    outline-offset:2px;
+}
+
+/* Shown when a search matches no company. */
+.company-empty{
+    margin: var(--sp-5) auto 0;
+    text-align:center;
+    color:#64748b;
+    font-size: var(--fs-sm);
 }

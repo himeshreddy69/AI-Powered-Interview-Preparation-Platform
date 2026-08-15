@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaRobot } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { scrollToSection } from "../../utils/scrollToSection";
 import { useTheme } from "../../context/ThemeContext";
 import "../../assets/styles/Navbar.css";
 
@@ -16,22 +17,16 @@ function Navbar() {
   }
 
   const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+
     if (location.pathname !== "/") {
-      e.preventDefault();
-      navigate(`/#${targetId}`);
-      setTimeout(() => {
-        const elem = document.getElementById(targetId);
-        if (elem) {
-          elem.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-    } else {
-      const elem = document.getElementById(targetId);
-      if (elem) {
-        e.preventDefault();
-        elem.scrollIntoView({ behavior: "smooth" });
-      }
+      // Coming from another page: go home first, then scroll once it renders.
+      navigate("/");
+      setTimeout(() => scrollToSection(targetId), 120);
+      return;
     }
+
+    scrollToSection(targetId);
   };
 
   return (

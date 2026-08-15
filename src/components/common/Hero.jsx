@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { scrollToSection } from "../../utils/scrollToSection";
 import "../../assets/styles/Hero.css";
 
 function Hero() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Already signed in? Skip the sign-up form and go straight to the app.
+  const handleGetStarted = () => {
+    navigate(user ? "/dashboard" : "/register");
+  };
+
+  const handleExploreFeatures = () => {
+    scrollToSection("features");
+  };
+
   return (
     <section className="hero">
 
@@ -22,11 +37,19 @@ function Hero() {
 
         <div className="hero-buttons">
 
-          <button className="primary-btn">
-            Get Started
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={handleGetStarted}
+          >
+            {user ? "Go to Dashboard" : "Get Started"}
           </button>
 
-          <button className="secondary-btn">
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={handleExploreFeatures}
+          >
             Explore Features
           </button>
 
