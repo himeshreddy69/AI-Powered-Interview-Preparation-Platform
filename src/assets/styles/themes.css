@@ -83,23 +83,30 @@ body.dark-theme .dashboard-btn {
 
 /* Theme Toggle Button styling */
 .theme-toggle-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 20px;
+  justify-content: center;
+  gap: var(--sp-2);
+  height: 44px;
+  padding: 0 var(--sp-4);
+  border-radius: var(--r-md);
   border: 1px solid #cbd5e1;
   background: #ffffff;
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 600;
+  color: #334155;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  font-family: inherit;
+  white-space: nowrap;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color var(--dur) var(--ease),
+              color var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
 }
 
 .theme-toggle-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #2563eb;
+  color: #2563eb;
+  box-shadow: var(--ring);
 }
 
 body.dark-theme .theme-toggle-btn {

@@ -1,0 +1,173 @@
+/* =========================================
+   DESIGN TOKENS
+   -----------------------------------------
+   One scale for the whole app. Before this file the landing page alone
+   used 17 different font sizes and 15 different corner radii, which is
+   what made the UI feel unpolished. Everything now snaps to these steps.
+
+   The colour scheme is unchanged — light, white cards, blue accent.
+========================================= */
+
+:root {
+  /* ---- Type scale ----
+     A 1.25 ratio, rounded to whole pixels. Six steps is plenty; if a
+     size is not on this list, it should not be in the design. */
+  --fs-xs: 12px;    /* eyebrow labels, captions, badges */
+  --fs-sm: 14px;    /* secondary text, table cells */
+  --fs-base: 16px;  /* body copy — never smaller for paragraphs */
+  --fs-lg: 20px;    /* card titles, lead paragraphs */
+  --fs-xl: 26px;    /* section subheadings */
+  --fs-2xl: 34px;   /* section headings */
+  --fs-3xl: 46px;   /* hero heading */
+
+  /* ---- Line heights ---- */
+  --lh-tight: 1.18;   /* large headings */
+  --lh-snug: 1.35;    /* small headings */
+  --lh-normal: 1.6;   /* body copy */
+
+  /* ---- Weights ---- */
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 800;
+
+  /* ---- Spacing rhythm (4px base) ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+
+  /* Vertical padding for a full-width landing section. */
+  --section-y: 88px;
+
+  /* ---- Corner radius — four steps, not fifteen ---- */
+  --r-sm: 8px;     /* inputs, small buttons, chips */
+  --r-md: 12px;    /* buttons, small cards */
+  --r-lg: 16px;    /* cards, panels */
+  --r-xl: 24px;    /* hero media, large feature blocks */
+  --r-pill: 999px; /* pills and round buttons */
+
+  /* ---- Elevation ----
+     Three levels. Soft and low-contrast, so cards feel lifted rather
+     than cut out. */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06),
+               0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 2px 4px rgba(15, 23, 42, 0.04),
+               0 6px 16px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.04),
+               0 16px 40px rgba(15, 23, 42, 0.10);
+
+  /* Ring used on focus, and on the hovered state of outlined controls. */
+  --ring: 0 0 0 3px rgba(37, 99, 235, 0.18);
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur: 180ms;
+
+  /* ---- Layout ---- */
+  --container: 1180px;
+}
+
+/* =========================================
+   BASE TYPOGRAPHY
+========================================= */
+
+body {
+  /* The system UI stack: San Francisco on Mac, Segoe UI on Windows, Roboto
+     on Android. Costs nothing to load and looks far more current than the
+     Arial the app was falling back to. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: #334155;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Form controls do not inherit the page font by default. */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: var(--lh-snug);
+  letter-spacing: -0.01em;
+}
+
+h1 { letter-spacing: -0.025em; }
+h2 { letter-spacing: -0.02em; }
+
+/* Defaults for headings and buttons that have no class of their own —
+   without these the browser falls back to odd sizes like 18.72px and
+   13.33px, which is what broke the type scale. Any class rule still wins. */
+h1 { font-size: var(--fs-3xl); font-weight: var(--fw-black); }
+h2 { font-size: var(--fs-2xl); font-weight: var(--fw-bold); }
+h3 { font-size: var(--fs-lg); font-weight: var(--fw-semibold); }
+h4 { font-size: var(--fs-base); font-weight: var(--fw-semibold); }
+h5, h6 { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+
+button {
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+/* Stops long headings stretching to an unreadable line length. */
+h1, h2 {
+  max-width: 22ch;
+}
+
+/* Paragraphs read best at roughly 65 characters per line. */
+p {
+  max-width: 68ch;
+}
+
+/* Numbers in stats and scores should not jitter as digits change. */
+.stat-item h3,
+.stats-grid h3,
+.performance-score strong,
+.hero-stat-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   FOCUS — visible for keyboard users only
+========================================= */
+
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =========================================
+   MOTION PREFERENCE
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

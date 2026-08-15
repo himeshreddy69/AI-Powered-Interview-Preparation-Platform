@@ -10,9 +10,9 @@
   background: #ffffff;
 
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
 
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-md);
 
   box-sizing: border-box;
 }
@@ -31,7 +31,7 @@
 
   margin-bottom: 7px;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
 
   letter-spacing: 1px;
@@ -42,7 +42,7 @@
 .interview-panel-header h1 {
   margin: 0 0 8px;
 
-  font-size: 26px;
+  font-size: var(--fs-xl);
   font-weight: 700;
 
   color: #0f172a;
@@ -51,7 +51,7 @@
 .interview-panel-header p {
   margin: 0;
 
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
 
   color: #64748b;
@@ -85,7 +85,7 @@
   background: #f8fafc;
 
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--r-md);
 
   cursor: pointer;
 
@@ -101,7 +101,7 @@
 
   border-color: #bfdbfe;
 
-  box-shadow: 0 7px 18px rgba(15, 23, 42, 0.07);
+  box-shadow: var(--shadow-md);
 }
 
 .interview-type-card.selected {
@@ -129,9 +129,9 @@
 
   background: #ffffff;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
-  font-size: 22px;
+  font-size: var(--fs-lg);
 }
 
 
@@ -142,7 +142,7 @@
 .interview-type-card h3 {
   margin: 0 0 7px;
 
-  font-size: 16px;
+  font-size: var(--fs-base);
   font-weight: 700;
 
   color: #0f172a;
@@ -156,7 +156,7 @@
 .interview-type-card p {
   margin: 0;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.6;
 
   color: #64748b;
@@ -181,7 +181,7 @@
 .interview-start-area p {
   margin: 0;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
 
   color: #64748b;
 }
@@ -199,12 +199,12 @@
   padding: 11px 20px;
 
   border: none;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
 
   background: #2563eb;
   color: #ffffff;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
 
   cursor: pointer;
@@ -220,7 +220,7 @@
 
   transform: translateY(-1px);
 
-  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 
@@ -236,9 +236,9 @@
   background: #ffffff;
 
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
 
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-md);
 
   box-sizing: border-box;
 }
@@ -261,7 +261,7 @@
 
   margin-bottom: 8px;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
 
   letter-spacing: 1px;
@@ -272,7 +272,7 @@
 .interview-screen-header h1 {
   margin: 0 0 8px;
 
-  font-size: 28px;
+  font-size: var(--fs-xl);
 
   color: #0f172a;
 }
@@ -280,7 +280,7 @@
 .interview-screen-header p {
   margin: 0;
 
-  font-size: 14px;
+  font-size: var(--fs-sm);
 
   color: #64748b;
 }
@@ -297,11 +297,11 @@
 
   border: 1px solid #dbeafe;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
   color: #2563eb;
 
-  font-size: 19px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 }
 
@@ -317,11 +317,11 @@
 
   border: 1px solid #e2e8f0;
 
-  border-radius: 14px;
+  border-radius: var(--r-lg);
 }
 
 .question-number {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
 
   letter-spacing: 1px;
@@ -332,7 +332,7 @@
 .question-card h2 {
   margin: 15px 0 25px;
 
-  font-size: 22px;
+  font-size: var(--fs-lg);
   line-height: 1.5;
 
   color: #0f172a;
@@ -348,13 +348,13 @@
 
   border: 1px solid #cbd5e1;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
   background: #ffffff;
 
   font-family: Arial, Helvetica, sans-serif;
 
-  font-size: 14px;
+  font-size: var(--fs-sm);
 
   resize: vertical;
 
@@ -385,13 +385,13 @@
 
   border: 1px solid #cbd5e1;
 
-  border-radius: 8px;
+  border-radius: var(--r-sm);
 
   background: #ffffff;
 
   color: #475569;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
 
   cursor: pointer;

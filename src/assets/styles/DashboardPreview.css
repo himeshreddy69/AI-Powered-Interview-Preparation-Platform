@@ -2,7 +2,7 @@
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:90px;
+padding: var(--section-y) var(--sp-8);
 }
 
 .dashboard-left{
@@ -10,12 +10,12 @@ width:45%;
 }
 
 .dashboard-left h2{
-font-size:45px;
+font-size: var(--fs-3xl);
 margin-bottom:25px;
 }
 
 .dashboard-left p{
-font-size:18px;
+font-size: var(--fs-lg);
 line-height:1.8;
 margin-bottom:30px;
 }
@@ -25,7 +25,7 @@ padding:15px 35px;
 background:#2563eb;
 border:none;
 color:white;
-border-radius:30px;
+border-radius: var(--r-xl);
 cursor:pointer;
 }
 
@@ -37,21 +37,21 @@ width:40%;
 background:white;
 padding:20px;
 margin-bottom:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+border-radius: var(--r-lg);
+box-shadow: var(--shadow-md);
 }
 
 .progress{
 height:10px;
 background:#ddd;
-border-radius:20px;
+border-radius: var(--r-xl);
 margin-top:10px;
 }
 
 .progress-fill{
 height:10px;
 background:#2563eb;
-border-radius:20px;
+border-radius: var(--r-xl);
 }
 
 .one{width:90%;}

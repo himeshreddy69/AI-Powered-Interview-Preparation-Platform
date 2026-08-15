@@ -24,7 +24,7 @@
 
   margin-bottom: 6px;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
 
   letter-spacing: 1px;
@@ -35,7 +35,7 @@
 .recent-header h2 {
   margin: 0;
 
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #0f172a;
@@ -54,13 +54,13 @@
   padding: 6px 8px;
 
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
 
   background: transparent;
 
   color: #2563eb;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 
   cursor: pointer;
@@ -75,7 +75,7 @@
 }
 
 .view-all-btn span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 
   transition: transform 0.2s ease;
 }
@@ -142,13 +142,13 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
   background: #eff6ff;
 
   color: #2563eb;
 
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: 700;
 }
 
@@ -160,7 +160,7 @@
 .interview-info h3 {
   margin: 0 0 4px;
 
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 
   color: #0f172a;
@@ -169,7 +169,7 @@
 .interview-info p {
   margin: 0;
 
-  font-size: 11px;
+  font-size: var(--fs-xs);
 
   color: #64748b;
 
@@ -195,7 +195,7 @@
 }
 
 .interview-score strong {
-  font-size: 17px;
+  font-size: var(--fs-base);
   font-weight: 700;
 
   color: #16a34a;
@@ -204,7 +204,7 @@
 .interview-score span {
   margin-top: 2px;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
 
   color: #94a3b8;
 }
@@ -223,7 +223,7 @@
     width: 37px;
     height: 37px;
 
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
 
   .interview-info p {
@@ -231,7 +231,7 @@
   }
 
   .interview-score strong {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
 }
 /* Shown when the user has not completed any interviews yet. */
@@ -240,8 +240,8 @@
   padding: 18px;
   background: #f8fafc;
   border: 1px dashed #cbd5e1;
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
   line-height: 1.55;
   color: #64748b;
   text-align: center;

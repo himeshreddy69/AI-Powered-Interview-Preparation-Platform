@@ -3,8 +3,8 @@
   margin: 40px auto;
   padding: 30px;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .profile-header {
@@ -16,7 +16,7 @@
 }
 
 .profile-title {
-  font-size: 28px;
+  font-size: var(--fs-xl);
   margin: 0 0 6px;
   color: #0f172a;
 }
@@ -24,7 +24,7 @@
 .profile-header p {
   margin: 0;
   color: #64748b;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .edit-profile-btn {
@@ -32,9 +32,9 @@
   padding: 11px 18px;
   background: #2563eb;
   color: #ffffff;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   transition: 0.3s;
 }
@@ -50,7 +50,7 @@
   padding: 25px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
 }
 
 .profile-image-section {
@@ -74,10 +74,10 @@
   padding: 10px 16px;
   background-color: #2563eb;
   color: white;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   cursor: pointer;
   transition: 0.3s;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
 
@@ -88,7 +88,7 @@
 .profile-image-section small {
   margin-top: 10px;
   color: #64748b;
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .profile-details {
@@ -104,7 +104,7 @@
 }
 
 .profile-field label {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: #334155;
 }
@@ -116,9 +116,9 @@
   padding: 10px 12px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   color: #334155;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .profile-field input,
@@ -126,12 +126,12 @@
   width: 100%;
   padding: 11px 12px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   outline: none;
   background: #ffffff;
   color: #0f172a;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   transition: 0.2s;
 }
 
@@ -160,9 +160,9 @@
 .cancel-profile-btn,
 .save-profile-btn {
   padding: 11px 20px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   transition: 0.3s;
 }

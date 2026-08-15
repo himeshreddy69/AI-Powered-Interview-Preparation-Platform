@@ -6,8 +6,9 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
-import "./index.css";          // page reset
-import "./assets/styles/themes.css";  // design tokens + dark mode
+import "./index.css";                 // page reset
+import "./assets/styles/tokens.css";  // type scale, spacing, radius, shadows
+import "./assets/styles/themes.css";  // colour tokens + dark mode
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

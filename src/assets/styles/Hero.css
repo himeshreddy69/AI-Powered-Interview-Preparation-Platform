@@ -2,7 +2,8 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:80px;
+    gap: var(--sp-8);
+    padding: var(--section-y) var(--sp-8);
     background:#f8fbff;
     min-height:90vh;
 }
@@ -12,17 +13,23 @@
 }
 
 .hero-badge{
+    /* inline-flex so the pill hugs its text instead of filling the column */
+    display:inline-flex;
+    align-items:center;
+    gap: var(--sp-2);
     background:#dbeafe;
     color:#2563eb;
-    padding:10px 18px;
-    border-radius:30px;
-    font-size:15px;
-    font-weight:600;
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--r-pill);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.01em;
 }
 
 .hero-content h1{
-    margin-top:25px;
-    font-size:60px;
+    margin-top: var(--sp-5);
+    font-weight: var(--fw-black);
+    font-size: var(--fs-3xl);
     color:#222;
     line-height:1.2;
 }
@@ -32,69 +39,88 @@
 }
 
 .hero-content p{
-    margin-top:25px;
-    font-size:20px;
-    line-height:1.8;
-    color:#555;
+    margin-top: var(--sp-4);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-normal);
+    color:#475569;
 }
 
 .hero-buttons{
-    margin-top:35px;
+    margin-top: var(--sp-6);
     display:flex;
-    gap:20px;
+    flex-wrap:wrap;
+    gap: var(--sp-3);
 }
 
-.primary-btn{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:15px 35px;
-    border-radius:30px;
+/* Both hero buttons share one shape so they read as a pair. */
+.hero-buttons .primary-btn,
+.hero-buttons .secondary-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:52px;
+    padding: 0 var(--sp-6);
+    border-radius: var(--r-md);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    font-family:inherit;
     cursor:pointer;
-    font-size:17px;
+    transition: background-color var(--dur) var(--ease),
+                color var(--dur) var(--ease),
+                box-shadow var(--dur) var(--ease),
+                transform var(--dur) var(--ease);
 }
 
-.primary-btn:hover{
-    background:#1d4ed8;
-}
-
-.secondary-btn{
-    background:white;
+.hero-buttons .primary-btn{
+    background:#2563eb;
+    color:#ffffff;
     border:2px solid #2563eb;
-    color:#2563eb;
-    padding:15px 35px;
-    border-radius:30px;
-    cursor:pointer;
-    font-size:17px;
+    box-shadow: var(--shadow-sm);
 }
 
-.secondary-btn:hover{
-    background:#2563eb;
-    color:white;
+.hero-buttons .primary-btn:hover{
+    background:#1d4ed8;
+    border-color:#1d4ed8;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.hero-buttons .secondary-btn{
+    background:#ffffff;
+    border:2px solid #cbd5e1;
+    color:#1e293b;
+}
+
+.hero-buttons .secondary-btn:hover{
+    border-color:#2563eb;
+    color:#2563eb;
+    box-shadow: var(--ring);
 }
 
 .hero-stats{
     display:flex;
-    gap:30px;
-    margin-top:60px;
+    flex-wrap:wrap;
+    gap: var(--sp-4);
+    margin-top: var(--sp-7);
 }
 
 .stat-card{
     background:white;
     padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.1);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+    border:1px solid #e8eef7;
     text-align:center;
     min-width:150px;
 }
 
 .stat-card h2{
     color:#2563eb;
-    font-size:32px;
+    font-size: var(--fs-2xl);
 }
 
 .stat-card p{
-    font-size:16px;
+    font-size: var(--fs-base);
     margin-top:10px;
 }
 
@@ -104,6 +130,6 @@
 
 .hero-image img{
     width:100%;
-    border-radius:20px;
-    box-shadow:0 20px 40px rgba(0,0,0,.15);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg);
 }

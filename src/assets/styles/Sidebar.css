@@ -49,7 +49,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 
 .sidebar-logo {
@@ -61,13 +61,13 @@
 
 .sidebar-logo h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: #ffffff;
 }
 
 .sidebar-logo span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #cbd5e1;
 }
 
@@ -90,7 +90,7 @@
   background: transparent;
   color: #cbd5e1;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   text-align: left;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -115,12 +115,12 @@
   width: 32px;
   height: 32px;
 
-  font-size: 16px;
+  font-size: var(--fs-base);
 }
 
 .sidebar-label {
   flex-grow: 1;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .sidebar-bottom {

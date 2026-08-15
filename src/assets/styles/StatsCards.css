@@ -22,7 +22,7 @@
 .stats-header h2 {
   margin: 0 0 5px;
 
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #0f172a;
@@ -31,7 +31,7 @@
 .stats-header p {
   margin: 0;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
 
   color: #94a3b8;
 }
@@ -39,13 +39,13 @@
 .stats-header span {
   padding: 6px 10px;
 
-  border-radius: 7px;
+  border-radius: var(--r-sm);
 
   background: #eff6ff;
 
   color: #2563eb;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 }
 
@@ -74,7 +74,7 @@
 
   border: 1px solid #e5e7eb;
 
-  border-radius: 12px;
+  border-radius: var(--r-md);
 
   text-align: center;
 
@@ -89,7 +89,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 
@@ -100,7 +100,7 @@
 .stat-item h3 {
   margin: 0 0 6px;
 
-  font-size: 27px;
+  font-size: var(--fs-xl);
   font-weight: 700;
 
   color: #2563eb;
@@ -114,7 +114,7 @@
 .stat-item p {
   margin: 0;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
 
   color: #64748b;
 }
@@ -136,7 +136,7 @@
 /* Shown when the user has not completed any interviews yet. */
 .stats-empty-note {
   margin: 14px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #94a3b8;
   text-align: center;
 }

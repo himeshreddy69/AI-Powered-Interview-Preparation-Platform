@@ -22,7 +22,7 @@
 .profile-card-header h2 {
   margin: 0;
 
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #0f172a;
@@ -31,13 +31,13 @@
 .profile-card-header span {
   padding: 6px 10px;
 
-  border-radius: 7px;
+  border-radius: var(--r-sm);
 
   background: #eff6ff;
 
   color: #2563eb;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 }
 
@@ -62,7 +62,7 @@
   justify-content: center;
   background: #eff6ff;
   color: #2563eb;
-  font-size: 40px;
+  font-size: var(--fs-3xl);
   font-weight: 700;
   user-select: none;
 }
@@ -94,7 +94,7 @@
 .profile-content h3 {
   margin: 0;
 
-  font-size: 19px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #0f172a;
@@ -108,7 +108,7 @@
 .profile-content p {
   margin: 7px 0 0;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
 
   color: #64748b;
 
@@ -136,6 +136,6 @@
   }
 
   .profile-content h3 {
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
 }

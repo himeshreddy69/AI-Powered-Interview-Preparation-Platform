@@ -1,11 +1,11 @@
 .search-section{
     text-align:center;
-    padding:70px;
+    padding: var(--section-y) var(--sp-8);
     background:white;
 }
 
 .search-section h2{
-    font-size:42px;
+    font-size: var(--fs-3xl);
     color:#222;
 }
 
@@ -23,9 +23,9 @@
 .search-box input{
     width:500px;
     padding:16px;
-    border-radius:40px;
+    border-radius: var(--r-pill);
     border:1px solid #ddd;
-    font-size:17px;
+    font-size: var(--fs-base);
 }
 
 .search-box button{
@@ -33,7 +33,7 @@
     border:none;
     background:#2563eb;
     color:white;
-    border-radius:40px;
+    border-radius: var(--r-pill);
     cursor:pointer;
 }
 

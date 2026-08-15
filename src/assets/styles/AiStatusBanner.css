@@ -12,25 +12,25 @@
   background: #fffbeb;
   border: 1px solid #fcd34d;
   border-left: 4px solid #f59e0b;
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 
 .ai-status-icon {
   flex-shrink: 0;
-  font-size: 18px;
+  font-size: var(--fs-lg);
   line-height: 1.4;
 }
 
 .ai-status-banner strong {
   display: block;
   margin-bottom: 4px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: #92400e;
 }
 
 .ai-status-banner p {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   color: #a16207;
 }
@@ -40,7 +40,7 @@
   background: #fef3c7;
   border-radius: 4px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #78350f;
 }
 

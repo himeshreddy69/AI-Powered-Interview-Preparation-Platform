@@ -6,9 +6,9 @@
   background: #ffffff;
 
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
 
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-md);
 }
 
 .performance-header {
@@ -24,7 +24,7 @@
 
   margin-bottom: 6px;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 1px;
 
@@ -34,7 +34,7 @@
 .performance-header h2 {
   margin: 0;
 
-  font-size: 21px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #0f172a;
@@ -43,7 +43,7 @@
 .performance-header p {
   margin: 6px 0 0;
 
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
 
   color: #64748b;
@@ -57,11 +57,11 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
   background: #eff6ff;
 
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 
 .performance-summary {
@@ -84,14 +84,14 @@
 }
 
 .performance-score strong {
-  font-size: 29px;
+  font-size: var(--fs-xl);
   font-weight: 700;
 
   color: #2563eb;
 }
 
 .performance-score span {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: #64748b;
 }
 
@@ -102,12 +102,12 @@
 }
 
 .performance-improvement > span {
-  font-size: 21px;
+  font-size: var(--fs-lg);
   color: #16a34a;
 }
 
 .performance-improvement strong {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 
   color: #16a34a;
@@ -116,7 +116,7 @@
 .performance-improvement p {
   margin: 2px 0 0;
 
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: #64748b;
 }
 
@@ -140,14 +140,14 @@
 }
 
 .performance-row-top span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 500;
 
   color: #475569;
 }
 
 .performance-row-top strong {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 
   color: #0f172a;
@@ -161,7 +161,7 @@
 
   background: #e2e8f0;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 
 .performance-bar-fill {
@@ -169,7 +169,7 @@
 
   background: #2563eb;
 
-  border-radius: 10px;
+  border-radius: var(--r-md);
 
   transition: width 0.4s ease;
 }
@@ -186,7 +186,7 @@
 }
 
 .performance-footer > span {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: #94a3b8;
 }
 
@@ -198,13 +198,13 @@
   padding: 6px 8px;
 
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
 
   background: transparent;
 
   color: #2563eb;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 
   cursor: pointer;
@@ -215,7 +215,7 @@
 }
 
 .performance-footer button span {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 @media (max-width: 900px) {
@@ -234,7 +234,7 @@
   }
 
   .performance-header h2 {
-    font-size: 20px;
+    font-size: var(--fs-lg);
   }
 
   .performance-summary {
