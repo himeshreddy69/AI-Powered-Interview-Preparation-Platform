@@ -160,8 +160,12 @@ function ResumeCard() {
       console.error("Resume upload error:", error);
 
       if (uploadSuccessful) {
+        // Pass the reason through when we have a useful one (for example an
+        // image-only PDF with no text layer) so the user knows what to fix.
         setStatusMsg(
-          "⚠️ Resume uploaded successfully, but processing could not be completed."
+          error?.message
+            ? `⚠️ Resume uploaded, but it could not be read. ${error.message}`
+            : "⚠️ Resume uploaded successfully, but processing could not be completed."
         );
       } else {
         setStatusMsg(
