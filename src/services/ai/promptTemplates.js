@@ -22,13 +22,34 @@ Return strictly valid JSON with this schema:
 }
 `;
 
+/*
+ * Company block. Empty string when the session is not a company track, so a
+ * plain interview keeps the prompt it always had. The sample question is
+ * given as a style reference rather than something to reuse verbatim — the
+ * AI copied it word for word otherwise.
+ */
+const companyBlock = (company) => {
+  if (!company?.name) return "";
+
+  const focus = Array.isArray(company.focus) ? company.focus : [];
+
+  return `
+This is a ${company.name} interview. Match how ${company.name} actually interviews.
+${company.style ? `Their round is characterised by: ${company.style}` : ""}
+${focus.length ? `Weight the questions towards these areas: ${focus.join(", ")}.` : ""}
+${company.sampleQuestion ? `A question typical of their bar, for calibration of difficulty and phrasing only — do NOT reuse it: "${company.sampleQuestion}"` : ""}
+`;
+};
+
 export const INTERVIEW_QUESTIONS_PROMPT = ({
   category = "Technical Interview",
   role = "Software Developer",
   resumeContext = "",
   questionCount = 5,
+  company = null,
 }) => `
 You are an expert interviewer conducting a ${category} for a ${role} position.
+${companyBlock(company)}
 ${resumeContext ? `Candidate Resume Context:\n"""${resumeContext}"""` : ""}
 
 Generate ${questionCount} tailored, realistic, high-quality interview questions.

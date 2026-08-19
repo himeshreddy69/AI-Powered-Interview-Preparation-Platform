@@ -187,13 +187,15 @@ export async function generateInterviewQuestions({
   category = "Technical Interview",
   role = "Software Developer",
   resumeText = "",
-  questionCount = 5
+  questionCount = 5,
+  company = null
 }) {
   const prompt = INTERVIEW_QUESTIONS_PROMPT({
     category,
     role,
     resumeContext: resumeText,
-    questionCount
+    questionCount,
+    company
   });
 
   const fallback = getFallbackQuestions(category, role, questionCount);

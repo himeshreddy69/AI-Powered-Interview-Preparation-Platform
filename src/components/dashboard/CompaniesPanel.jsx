@@ -80,10 +80,19 @@ function CompaniesPanel({ onStartCompanyInterview }) {
 
   const handleStartInterview = (company) => {
     if (onStartCompanyInterview) {
+      /*
+       * Send the whole track, not just the name. The focus areas and the
+       * sample question are what make a Google round read differently from
+       * an Amazon one — without them the prompt only ever saw the company
+       * name buried inside the role string.
+       */
       onStartCompanyInterview({
         category: "Technical Interview",
         role: `${company.name} Software Engineer`,
-        companyName: company.name
+        companyName: company.name,
+        companyFocus: company.topics,
+        companyStyle: company.description,
+        companySampleQuestion: company.sampleQuestion
       });
     } else {
       alert(`Starting ${company.name} Interview Session!`);

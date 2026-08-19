@@ -23,6 +23,13 @@ function InterviewPanel({ onCompleteSession, preset }) {
 
   const [resumeData, setResumeData] = useState(null);
 
+  /*
+   * The company track chosen in CompaniesPanel, or null for a plain
+   * interview. Held separately from targetRole so the prompt can use the
+   * focus areas rather than inferring the company from the role string.
+   */
+  const [companyTrack, setCompanyTrack] = useState(null);
+
   const [stage, setStage] = useState("setup");
 
   const [questions, setQuestions] = useState([]);
@@ -128,6 +135,17 @@ function InterviewPanel({ onCompleteSession, preset }) {
     if (preset.role) {
       setTargetRole(preset.role);
     }
+
+    setCompanyTrack(
+      preset.companyName
+        ? {
+            name: preset.companyName,
+            focus: preset.companyFocus || [],
+            style: preset.companyStyle || "",
+            sampleQuestion: preset.companySampleQuestion || "",
+          }
+        : null
+    );
   }, [preset]);
 
   /*
@@ -311,6 +329,7 @@ function InterviewPanel({ onCompleteSession, preset }) {
           role: targetRole.trim(),
           resumeText: resumeData?.rawText || "",
           questionCount: Number(questionCount),
+          company: companyTrack,
         });
 
       if (
