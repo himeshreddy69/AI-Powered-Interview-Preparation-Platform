@@ -1,11 +1,15 @@
 import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
   createUserWithEmailAndPassword,
   getAuth,
+  initializeAuth,
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
+  setPersistence,
 } from "firebase/auth";
 
 import app, {
@@ -14,8 +18,49 @@ import app, {
 } from "./firebase";
 
 
+/*
+ * Keep the session in localStorage instead of Firebase's default IndexedDB.
+ * The IndexedDB store refuses to open while the tab is hidden and throws a raw
+ * "Database is closing/hidden" — which is exactly what the Google popup does:
+ * the opener tab loses visibility while the credential is being written, and
+ * the user gets that string dumped on the login form. localStorage has no
+ * hidden/closing state, so the whole failure mode goes away.
+ *
+ * initializeAuth rather than getAuth, because persistence is then set when the
+ * instance is built; setPersistence is async and races the first sign-in call.
+ * This module is imported at startup, so the bare getAuth() calls in Profile
+ * resolve to this same configured instance.
+ */
+function createAuth() {
+
+  try {
+
+    return initializeAuth(app, {
+      persistence: browserLocalPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver,
+    });
+
+  } catch {
+
+    /*
+     * Already initialized — Vite HMR re-evaluating this module in dev. The
+     * existing instance keeps whatever persistence it was built with, so
+     * re-assert localStorage rather than silently handing back an
+     * IndexedDB-backed instance and reintroducing the bug in dev only.
+     */
+    const existing = getAuth(app);
+
+    setPersistence(existing, browserLocalPersistence).catch(() => {});
+
+    return existing;
+
+  }
+
+}
+
+
 export const auth = isFirebaseConfigured
-  ? getAuth(app)
+  ? createAuth()
   : null;
 
 
@@ -28,7 +73,13 @@ function requireFirebaseConfiguration() {
 
   if (!isFirebaseConfigured) {
 
-    throw new Error(firebaseConfigurationError);
+    // Carry a code so getAuthErrorMessage passes the full text through
+    // instead of flattening it to the generic fallback.
+    const error = new Error(firebaseConfigurationError);
+
+    error.code = "auth/configuration-missing";
+
+    throw error;
 
   }
 
@@ -179,10 +230,28 @@ export function getAuthErrorMessage(error) {
   };
 
 
-  return (
-    messages[error.code] ||
-    error.message ||
-    "Something went wrong. Please try again."
-  );
+  if (messages[error?.code]) {
+
+    return messages[error.code];
+
+  }
+
+
+  /*
+   * Only an auth/* code is a real, user-facing auth failure worth quoting.
+   * Anything else is an SDK internal ("Database is closing/hidden", IndexedDB
+   * and network plumbing) whose wording means nothing to someone looking at a
+   * login form — log it for us, show them something actionable.
+   */
+  if (typeof error?.code === "string" && error.code.startsWith("auth/")) {
+
+    return error.message;
+
+  }
+
+
+  console.error("Unhandled auth error:", error);
+
+  return "Something went wrong. Please try again.";
 
 }

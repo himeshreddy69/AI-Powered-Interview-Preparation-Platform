@@ -12,7 +12,17 @@ import "./assets/styles/themes.css";  // colour tokens + dark mode
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/*
+      Opt in to the v7 behaviours now. React Router logs a warning for each
+      one it is about to change, and both are already how this app behaves —
+      the flags just stop the console noise and make the v7 upgrade a no-op.
+    */}
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <ThemeProvider>
         <AuthProvider>
           <App />
