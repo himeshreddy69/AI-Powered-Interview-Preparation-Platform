@@ -222,6 +222,21 @@ export function getAuthErrorMessage(error) {
 
 
 
+    /*
+     * Firebase only allows sign-in from domains on its authorised list, and
+     * Vercel mints a fresh hostname for every deployment — so this fires on
+     * preview URLs while production works fine. Naming the exact hostname
+     * saves squinting at the address bar to work out what to paste.
+     */
+    "auth/unauthorized-domain":
+
+      `This site's domain (${
+        typeof window !== "undefined" ? window.location.hostname : "unknown"
+      }) is not authorised in Firebase. Add it under Authentication > ` +
+      `Settings > Authorized domains, or open the app on your main domain.`,
+
+
+
     "auth/account-exists-with-different-credential":
 
       "Account already exists using another login method.",
